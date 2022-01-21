@@ -1,0 +1,77 @@
+.roles {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.role {
+  border: 1px solid #ccc;
+  background: #eee;
+  border-radius: 5px;
+  padding: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  width: calc(50% - 20px);
+}
+
+.error-text {
+  display: none;
+  color: red;
+}
+
+.error .error-text {
+  display: initial;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+}
+
+.targets {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.target {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+.target select {
+  width: 100%;
+}
+
+.target-values {
+  display: flex;
+  flex-direction: row;
+}
+
+.target-values .field {
+  width: 50%;
+}
+
+.boundaries {
+  width: 100%;
+  height: 10px;
+  display: flex;
+  flex-direction: row;
+}
+
+.underperform {
+  height: 100%;
+  background-color: red;
+}
+.expected {
+  height: 100%;
+  background-color: orange;
+}
+.overperform {
+  height: 100%;
+  background-color: green;
+}

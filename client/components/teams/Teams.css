@@ -1,0 +1,104 @@
+.wrapper {
+  position: relative;
+}
+
+.teams {
+  position: sticky;
+  top: 0;
+  width: 300px;
+  color: #fff;
+  margin-right: 20px;
+  background-color: #333;
+  border-bottom: 4px solid #555;
+}
+
+.title {
+  width: 100%;
+  text-align: center;
+  font-size: 32px;
+  font-weight: bold;
+  background-color: #f49703;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-family: 'Big Shoulders Display', sans-serif;
+  padding: 12px;
+}
+
+.budget {
+  text-align: center;
+  padding: 12px;
+  font-weight: bold;
+  font-family: 'Big Shoulders Display', sans-serif;
+  color: #48b803;
+  font-size: 24px;
+  letter-spacing: 0.05em;
+}
+
+.over-budget {
+  color: #d60505;
+}
+
+.slot {
+  background-color: #555;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+}
+
+.top-half {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+}
+
+.avatar {
+  height: 48px;
+  width: 48px;
+  border-radius: 2px;
+  border: 1px solid #ccc;
+}
+
+.details {
+  width: 100%;
+}
+
+.remove {
+  background-color: #d60505;
+  color: #fff;
+  width: 24px;
+  height: 24px;
+  border-radius: 2px;
+  text-align: center;
+}
+
+.price {
+  text-align: center;
+  padding: 8px;
+  font-weight: bold;
+  font-family: 'Big Shoulders Display', sans-serif;
+  background-color: #48b803;
+  letter-spacing: 0.05em;
+  width: 100%;
+}
+
+.empty {
+  color: #aaa;
+  text-align: center;
+  padding: 12px;
+}
+
+.details {
+  padding: 12px;
+}
+
+.new-team {
+}

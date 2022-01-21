@@ -1,0 +1,4 @@
+.team-builder {
+  display: flex;
+  flex-direction: row;
+}
