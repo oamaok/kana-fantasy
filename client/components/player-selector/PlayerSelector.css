@@ -1,5 +1,5 @@
 .teams {
-  width: 1200px;
+  flex-grow: 1;
   color: #fff;
 }
 
@@ -43,6 +43,20 @@
   font-size: 16px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
   transition: 0.1s ease-out all;
+}
+
+.selected {
+  opacity: 0.5;
+  filter: grayscale(50%);
+}
+
+.too-expensive {
+  opacity: 0.5;
+  filter: grayscale(50%);
+}
+
+.too-expensive .price {
+  background-color: #b80303;
 }
 
 .player:hover {

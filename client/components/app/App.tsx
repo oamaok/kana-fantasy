@@ -5,7 +5,7 @@ import Routes from '../../Routes'
 import Header from '../header/Header'
 
 const App = () => {
-  if (state.route.name === 'oauthCallback' || state.auth.type === 'loading') {
+  if (state.route?.name === 'oauth-callback' || state.auth.type === 'loading') {
     return <div>Loading...</div>
   }
 

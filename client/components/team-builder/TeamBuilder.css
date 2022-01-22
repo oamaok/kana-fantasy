@@ -1,4 +1,6 @@
 .team-builder {
+  padding: 40px 100px;
+  width: 100%;
   display: flex;
   flex-direction: row;
 }

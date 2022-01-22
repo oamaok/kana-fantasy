@@ -1,17 +1,38 @@
+.role-editor {
+  color: #fff;
+  background-color: #333;
+  border-bottom: 4px solid #555;
+  margin-bottom: 36px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+.role-editor h3 {
+  width: 100%;
+  text-align: center;
+  font-size: 32px;
+  font-weight: bold;
+  background-color: #f49703;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-family: 'Big Shoulders Display', sans-serif;
+  padding: 12px;
+}
+
 .roles {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  padding: 24px;
+  justify-content: space-evenly;
 }
 
 .role {
-  border: 1px solid #ccc;
-  background: #eee;
-  border-radius: 5px;
-  padding: 10px;
-  margin-right: 10px;
-  margin-bottom: 10px;
-  width: calc(50% - 20px);
+  background-color: #555;
+  font-size: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  width: 400px;
+  padding: 12px;
+  margin-right: 12px;
+  margin-bottom: 12px;
 }
 
 .error-text {
@@ -33,14 +54,15 @@
   flex-direction: row;
   flex-wrap: wrap;
   width: 100%;
+  margin-right: -6px;
+  margin-left: -6px;
 }
 
 .target {
   width: 50%;
   display: flex;
   flex-direction: column;
-  padding: 10px;
-  border: 1px solid #ccc;
+  padding: 6px;
 }
 
 .target select {
@@ -61,6 +83,7 @@
   height: 10px;
   display: flex;
   flex-direction: row;
+  margin-top: 10px;
 }
 
 .underperform {

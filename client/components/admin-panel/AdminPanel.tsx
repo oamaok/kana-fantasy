@@ -1,4 +1,4 @@
-import { h } from 'kaiku'
+import { h, useEffect } from 'kaiku'
 import SeasonEditor from '../season-editor/SeasonEditor'
 import RoleEditor from '../role-editor/RoleEditor'
 import styles from './AdminPanel.css'

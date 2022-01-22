@@ -1,5 +1,9 @@
-import { RoleUpdateRequest, Team } from '../common/validators'
-import { IPlayer } from '../common/interfaces'
+import {
+  RoleUpdateRequest,
+  SeasonUpdateRequest,
+  Team,
+} from '../common/validators'
+import { Player } from '../common/types'
 import { state } from './state'
 
 const apiRequest = (method: 'POST' | 'GET', endpoint: string, data?: any) =>
@@ -18,10 +22,17 @@ export const authVerify = () => apiRequest('GET', 'auth/verify')
 export const authRefresh = () => apiRequest('GET', 'auth/refresh')
 export const authRevoke = () => apiRequest('GET', 'auth/revoke')
 
-export const getPlayers = (division: string): Promise<IPlayer[]> =>
-  apiRequest('GET', 'players/' + division)
+export const getPlayers = (
+  season: number,
+  division: string
+): Promise<Player[]> =>
+  apiRequest('GET', `seasons/${season}/${division}/players`)
 export const getRoles = () => apiRequest('GET', 'roles')
-export const getFullRoles = () => apiRequest('GET', 'full-roles')
+export const getRolesWithTargets = () => apiRequest('GET', 'roles/with-targets')
 export const saveRoles = (data: RoleUpdateRequest) =>
   apiRequest('POST', 'roles', data)
 export const saveTeam = (team: Team) => apiRequest('POST', 'team', team)
+export const getSeasons = () => apiRequest('GET', 'seasons')
+
+export const saveSeasons = (seasons: SeasonUpdateRequest) =>
+  apiRequest('POST', 'seasons', seasons)

@@ -1,27 +1,35 @@
 import { createState } from 'kaiku'
-import { IPlayer } from '../common/interfaces'
+import { Player } from '../common/types'
 import { Team } from '../common/validators'
 import { AuthState, getInitialAuthState } from './auth'
-import { parseRoute } from './router'
+import { matchRoute } from './router'
 import { translations, Translations, Languages } from './translations'
 import * as api from './api'
 type State = {
   auth: AuthState
-  route: ReturnType<typeof parseRoute>
+  route: ReturnType<typeof matchRoute>
   language: Languages
   roles: { id: number; name: string; description: string }[]
   division: string
-  players: IPlayer[]
+  players: Player[]
+  seasons: {
+    id: number
+    name: string
+    startDate: string
+    endDate: string
+    lockDate: string
+  }[]
   teams: Team[]
 }
 
 export const state = createState<State>({
   auth: getInitialAuthState(),
-  route: parseRoute(location),
+  route: matchRoute(location),
   language: 'en_GB',
   division: 'Masters',
   roles: [],
   players: [],
+  seasons: [],
   teams: [],
 })
 
@@ -38,10 +46,10 @@ export const getCurrentTeamPlayers = () => {
 
   return team.players
     .map((player) => state.players.find((p) => p.steamId === player.steamId))
-    .filter((player): player is IPlayer => !!player)
+    .filter((player): player is Player => !!player)
 }
 
-export const addPlayerToCurrentTeam = (player: IPlayer) => {
+export const addPlayerToCurrentTeam = (player: Player) => {
   const team = getCurrentTeam()
   if (!team) return
 
@@ -53,9 +61,14 @@ export const addPlayerToCurrentTeam = (player: IPlayer) => {
   api.saveTeam(team)
 }
 
-export const removePlayerFromCurrentTeam = (player: IPlayer) => {
+export const removePlayerFromCurrentTeam = (player: Player) => {
   const team = getCurrentTeam()
   if (!team) return
 
   team.players = team.players.filter((p) => p.steamId !== player.steamId)
+}
+
+export const getRemainingBudget = () => {
+  const players = getCurrentTeamPlayers()
+  return 1000000 - players.reduce((sum, player) => sum + player.price, 0)
 }

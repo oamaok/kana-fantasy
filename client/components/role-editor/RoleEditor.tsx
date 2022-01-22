@@ -3,21 +3,16 @@ import { stats } from '../../../common/stats'
 import * as api from '../../api'
 import Button from '../button/Button'
 
-import { Stat, StatTarget } from '../../../common/validators'
+import { RoleUpdateRequest, Stat, StatTarget } from '../../../common/validators'
 
 import styles from './RoleEditor.css'
-
-type Role = {
-  id: number
-  name: string
-  description: string
-  targets: StatTarget[]
-}
 
 const getBoundaries = (
   target: StatTarget,
   stats: Record<Stat, number[]> | null
 ): [number, number] => {
+  console.log(target, stats)
+
   if (!stats) return [0, 0]
 
   const values = stats[target.stat]
@@ -48,12 +43,12 @@ const getBoundaries = (
 
 const RoleEditor = () => {
   const editor = useState({
-    roles: [] as Role[],
+    roles: [] as RoleUpdateRequest,
     stats: null as Record<Stat, number[]> | null,
   })
 
   useEffect(async () => {
-    const { roles } = await api.getFullRoles()
+    const roles = await api.getRolesWithTargets()
     editor.roles = roles
 
     editor.stats = immutable(
@@ -82,8 +77,8 @@ const RoleEditor = () => {
               <input
                 type="text"
                 value={role.name}
-                onInput={(evt) => {
-                  role.name = evt.target.value
+                onInput={(evt: InputEvent) => {
+                  role.name = (evt.target as HTMLInputElement).value
                 }}
               />
             </div>
@@ -91,8 +86,8 @@ const RoleEditor = () => {
               <label>Roolin kuvaus</label>
               <textarea
                 value={role.description}
-                onInput={(evt) => {
-                  role.description = evt.target.value
+                onInput={(evt: InputEvent) => {
+                  role.description = (evt.target as HTMLInputElement).value
                 }}
               />
             </div>
@@ -108,18 +103,12 @@ const RoleEditor = () => {
                 const expectedWidth = higherBoundary - lowerBoundary
                 const overperformWidth = 1 - (lowerBoundary + expectedWidth)
 
-                console.log({
-                  underperformWidth,
-                  expectedWidth,
-                  overperformWidth,
-                  sum: underperformWidth + expectedWidth + overperformWidth,
-                })
-
                 return (
                   <div className={styles('target')}>
                     <select
-                      onChange={(evt) => {
-                        target.stat = evt.target.value
+                      onChange={(evt: InputEvent) => {
+                        target.stat = (evt.target as HTMLSelectElement)
+                          .value as Stat
                       }}
                     >
                       {stats.map((stat) => (
@@ -130,25 +119,29 @@ const RoleEditor = () => {
                     </select>
                     <div className={styles('target-values')}>
                       <div className={styles('field')}>
-                        <label>Tavoitearvo</label>
+                        <label>Target</label>
                         <input
                           type="number"
                           step="1"
                           value={target.target}
-                          onInput={(evt) => {
-                            target.target = parseFloat(evt.target.value)
+                          onInput={(evt: InputEvent) => {
+                            target.target = parseFloat(
+                              (evt.target as HTMLInputElement).value
+                            )
                           }}
                         />
                       </div>
                       <div className={styles('field')}>
-                        <label>Marginaali</label>
+                        <label>Margin</label>
                         <input
                           type="number"
                           step="1"
                           min="1"
                           value={target.margin}
-                          onInput={(evt) => {
-                            target.margin = parseFloat(evt.target.value)
+                          onInput={(evt: InputEvent) => {
+                            target.margin = parseFloat(
+                              (evt.target as HTMLInputElement).value
+                            )
                           }}
                         />
                       </div>
@@ -189,7 +182,7 @@ const RoleEditor = () => {
       <Button
         onClick={() =>
           editor.roles.push({
-            id: -1,
+            id: null,
             name: 'Uusi rooli',
             description: 'Tämä on uusi rooli!',
             targets: [],
@@ -201,7 +194,7 @@ const RoleEditor = () => {
 
       <Button
         onClick={async () => {
-          editor.roles = await api.saveRoles({ roles: editor.roles })
+          editor.roles = await api.saveRoles(editor.roles)
         }}
       >
         Tallenna roolit

@@ -113,7 +113,7 @@ esbuild.build({
     'process.env.NODE_ENV': '"production"',
     __ENVIRONMENT__: '"development"',
   },
-  minify: true,
+  minify: false,
   plugins: [CssModulesPlugin()],
   jsxFactory: 'h',
   jsxFragment: 'Fragment',

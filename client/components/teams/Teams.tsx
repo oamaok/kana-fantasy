@@ -4,6 +4,7 @@ import {
   getCurrentTeam,
   getCurrentTeamPlayers,
   removePlayerFromCurrentTeam,
+  getRemainingBudget,
 } from '../../state'
 import * as api from '../../api'
 import styles from './Teams.css'
@@ -23,15 +24,16 @@ const divisions = [
 
 const onDivisionSelect = async (evt: InputEvent) => {
   state.division = (evt.target as HTMLSelectElement).value
-  state.players = await api.getPlayers(state.division)
+  state.players = await api.getPlayers(
+    state.route!.params.season,
+    state.division
+  )
 }
 
 const Teams = () => {
   const team = getCurrentTeam()
   const players = getCurrentTeamPlayers()
-
-  const budgetRemaining =
-    1000000 - players.reduce((sum, player) => sum + player.price, 0)
+  const budgetRemaining = getRemainingBudget()
 
   return (
     <div className={styles('wrapper')}>
@@ -74,7 +76,7 @@ const Teams = () => {
                     <div className={styles('top-half')}>
                       <img src={player.avatar} className={styles('avatar')} />
                       <div className={styles('details')}>
-                        <div className={styles('name')}>{player.name}</div>
+                        <div className={styles('name')}>{player.username}</div>
                         <div className={styles('role-selector')}>
                           Valitse rooli...
                         </div>

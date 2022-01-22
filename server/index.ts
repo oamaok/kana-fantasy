@@ -8,16 +8,12 @@ import mount from 'koa-mount'
 import bodyparser from 'koa-bodyparser'
 import OAuth from 'discord-oauth2'
 import fs from 'fs'
-import { initializeConnection } from './connection'
 import * as t from 'io-ts'
 import * as jwt from './jwt'
-
-import User from './models/User'
-import PlayerRole from './models/PlayerRole'
 import * as validators from '../common/validators'
-import Player from './models/Player'
-import Team from './models/Team'
+import * as db from './database'
 
+import migrate from './scripts/migrate'
 dotenv.config()
 
 const DISCORD_OAUTH2_TOKEN_REVOKE_CREDENTIALS = Buffer.from(
@@ -34,7 +30,7 @@ const app = new Koa()
 const apiRouter = new Router()
 
 const validateBody =
-  <Decoder extends t.TypeC<any>>(
+  <Decoder extends t.TypeC<any> | t.ArrayC<any>>(
     decoder: Decoder,
     callback: (
       ctx: Omit<ParameterizedContext, 'request'> & {
@@ -46,6 +42,7 @@ const validateBody =
     ) => void
   ) =>
   async (ctx: ParameterizedContext, next: Next) => {
+    console.log(ctx.request.body)
     const result = decoder.decode(ctx.request.body)
 
     if (result._tag === 'Left') {
@@ -93,18 +90,6 @@ const unauthorized = (ctx: ParameterizedContext) => {
   ctx.body = { error: 'unauthorized' }
 }
 
-const updateUser = async (discordUser: OAuth.User): Promise<User> => {
-  const user = new User()
-  user.id = discordUser.id
-  user.avatar = discordUser.avatar ?? null
-  user.discordName = discordUser.username + '#' + discordUser.discriminator
-
-  await user.save()
-  const users = await User.findByIds([discordUser.id])
-
-  return users[0]
-}
-
 apiRouter
   .post(
     '/auth/request',
@@ -117,7 +102,7 @@ apiRouter
       })
 
       const discordUser = await oauth.getUser(access_token)
-      const user = await updateUser(discordUser)
+      const user = await db.upsertUser(discordUser)
 
       ctx.body = {
         token: jwt.sign({
@@ -141,7 +126,7 @@ apiRouter
     try {
       const discordUser = await oauth.getUser(accessToken)
 
-      const user = await updateUser(discordUser)
+      const user = await db.upsertUser(discordUser)
 
       ctx.body = { user }
     } catch (err) {
@@ -164,7 +149,7 @@ apiRouter
 
     const discordUser = await oauth.getUser(access_token)
 
-    const user = await updateUser(discordUser)
+    const user = await db.upsertUser(discordUser)
 
     ctx.body = {
       user,
@@ -189,57 +174,41 @@ apiRouter
     )
     ctx.body = { status: 'ok' }
   })
-  .post('/team',
+  .post(
+    '/team/:season',
     requireAuth,
     validateBody(validators.Team, async (ctx) => {
-      const teamRecord = ctx.request.body
-      const user = await User.findOne({  where: { id: ctx.user.id }})
-
-      const teams = user!.teams ?? []
-
-      const existingTeam = teams.find(team => team.division === teamRecord.division && team.season === teamRecord.season)
-
-      const teamToSave = new Team()
-      if (existingTeam) {
-        teamToSave.id = existingTeam.id
-      }
-
-      teamToSave.name = teamRecord.name
-      teamToSave.season = teamRecord.season
-      teamToSave.division = teamRecord.division
-      teamToSave.players = teamRecord.players
-      teamToSave.user = user!
-
-      ctx.body = await teamToSave.save()
+      ctx.body = {}
     })
   )
-  .get('/players/:division', requireAuth, async (ctx) => {
-    ctx.body = await Player.find({ where: { division: ctx.params.division } })
+  .get('/seasons', async (ctx) => {
+    ctx.body = await db.getSeasons()
+  })
+  .post(
+    '/seasons',
+    requireAdmin,
+    validateBody(validators.SeasonUpdateRequest, async (ctx) => {
+      ctx.body = await db.saveSeasons(ctx.request.body)
+    })
+  )
+  .get('/seasons/:season', () => {})
+  .get('/seasons/:season/:division/players', requireAuth, async (ctx) => {
+    ctx.body = await db.getPlayers(
+      parseInt(ctx.params.season),
+      ctx.params.division
+    )
   })
   .get('/roles', requireAuth, async (ctx) => {
-    ctx.body = await PlayerRole.find({ select: ['id', 'name', 'description'] })
+    ctx.body = await db.getRoles()
   })
-  .get('/full-roles', requireAdmin, async (ctx) => {
-    ctx.body = { roles: await PlayerRole.find() }
+  .get('/roles/with-targets', requireAdmin, async (ctx) => {
+    ctx.body = await db.getRolesWithTargets()
   })
   .post(
     '/roles',
     requireAdmin,
     validateBody(validators.RoleUpdateRequest, async (ctx) => {
-      ctx.body = await Promise.all(
-        ctx.request.body.roles.map((role) => {
-          const playerRole = new PlayerRole()
-          if (role.id !== -1) {
-            playerRole.id = role.id
-          }
-
-          playerRole.name = role.name
-          playerRole.description = role.description
-          playerRole.targets = role.targets
-
-          return playerRole.save()
-        })
-      )
+      ctx.body = await db.saveRoles(ctx.request.body)
     })
   )
 
@@ -253,7 +222,7 @@ app
   })
 
 const init = async () => {
-  await initializeConnection()
+  await migrate()
   app.listen(8080)
   console.log('listening to :8080')
 }

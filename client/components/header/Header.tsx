@@ -18,7 +18,7 @@ const Header = () => {
       {state.auth.type === 'authenticated' && (
         <div className={styles('user')}>
           <img src={getUserAvatar(state.auth.user)} />
-          <div>{state.auth.user.discordName}</div>
+          <div>{state.auth.user.username}</div>
           <Button onClick={logout}>Kirjaudu ulos</Button>
         </div>
       )}

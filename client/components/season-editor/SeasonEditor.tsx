@@ -1,21 +1,30 @@
-import { h, useState } from 'kaiku'
+import { h, useState, useEffect } from 'kaiku'
+import { state } from '../../state'
 import Button from '../button/Button'
+import * as api from '../../api'
 import styles from './SeasonEditor.css'
+import { Season } from '../../../common/validators'
 
-type Season = {
-  id: number
-  name: string
-  startDate: Date
-  endDate: Date
-  lockDate: Date
+const toDateInputFormat = (date: Date | string): string =>
+  new Date(date).toISOString().substr(0, 10)
+
+const formatDates = (season: Season): Season => {
+  return {
+    ...season,
+
+    startDate: toDateInputFormat(season.startDate),
+    endDate: toDateInputFormat(season.endDate),
+    lockDate: toDateInputFormat(season.lockDate),
+  }
 }
-
-const toDateInputFormat = (date: Date): string =>
-  date.toISOString().substr(0, 10)
 
 const SeasonEditor = () => {
   const editor = useState({
     seasons: [] as Season[],
+  })
+  useEffect(async () => {
+    const seasons = await api.getSeasons()
+    editor.seasons = seasons.map(formatDates)
   })
 
   return (
@@ -26,32 +35,32 @@ const SeasonEditor = () => {
           <input
             type="text"
             value={season.name}
-            onInput={(evt) => {
-              season.name = evt.target.value
+            onInput={(evt: InputEvent) => {
+              season.name = (evt.target as HTMLInputElement).value
             }}
           />
           Alku{' '}
           <input
             type="date"
-            value={toDateInputFormat(season.startDate)}
-            onInput={(evt) => {
-              season.startDate = new Date(evt.target.value)
+            value={season.startDate}
+            onInput={(evt: InputEvent) => {
+              season.startDate = (evt.target as HTMLInputElement).value
             }}
           />
           Loppu{' '}
           <input
             type="date"
-            value={toDateInputFormat(season.endDate)}
-            onInput={(evt) => {
-              season.endDate = new Date(evt.target.value)
+            value={season.endDate}
+            onInput={(evt: InputEvent) => {
+              season.endDate = (evt.target as HTMLInputElement).value
             }}
           />
           Tiimien lukitus{' '}
           <input
             type="date"
-            value={toDateInputFormat(season.lockDate)}
-            onInput={(evt) => {
-              season.lockDate = new Date(evt.target.value)
+            value={season.lockDate}
+            onInput={(evt: InputEvent) => {
+              season.lockDate = (evt.target as HTMLInputElement).value
             }}
           />
         </div>
@@ -59,15 +68,26 @@ const SeasonEditor = () => {
       <Button
         onClick={() => {
           editor.seasons.push({
-            id: -1,
+            id: null,
             name: 'Uusi kausi',
-            startDate: new Date(),
-            endDate: new Date(),
-            lockDate: new Date(),
+            startDate: toDateInputFormat(new Date()),
+            endDate: toDateInputFormat(new Date()),
+            lockDate: toDateInputFormat(new Date()),
           })
         }}
       >
         + Uusi kausi
+      </Button>
+      <Button
+        onClick={async () => {
+          // TODO: Maybe diff the seasons so only the ones changed
+          // will be updated
+          const seasons = await api.saveSeasons(editor.seasons)
+          state.seasons = seasons
+          editor.seasons = seasons.map(formatDates)
+        }}
+      >
+        Tallenna kaudet
       </Button>
     </div>
   )

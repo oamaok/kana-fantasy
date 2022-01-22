@@ -23,7 +23,7 @@ export const handleOAuth = async () => {
 export type User = {
   id: string
   avatar: string
-  discordName: string
+  username: string
 }
 
 export type AuthState =
