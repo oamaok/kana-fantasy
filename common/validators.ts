@@ -62,7 +62,7 @@ export type RoleUpdateRequest = t.TypeOf<typeof RoleUpdateRequest>
 
 export const TeamPlayer = t.type({
   steamId: t.string,
-  role: t.union([t.number, t.null]),
+  roleId: t.union([t.number, t.null]),
 })
 
 export type TeamPlayer = t.TypeOf<typeof TeamPlayer>

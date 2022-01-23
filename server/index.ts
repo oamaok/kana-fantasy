@@ -76,12 +76,14 @@ const requireAuth = (ctx: ParameterizedContext, next: Next) => {
 }
 
 const requireAdmin = (ctx: ParameterizedContext, next: Next) => {
-  const isAdmin = jwt.verify(ctx.headers.authorization ?? '')?.isAdmin
+  const user = jwt.verify(ctx.headers.authorization ?? '')
+  const isAdmin = user?.isAdmin
   if (!isAdmin) {
     ctx.status = 401
     ctx.body = { error: 'unauthorized' }
     return
   }
+  ctx.user = user
   return next()
 }
 
@@ -174,11 +176,15 @@ apiRouter
     )
     ctx.body = { status: 'ok' }
   })
+  .get('/teams', requireAuth, async (ctx) => {
+    ctx.body = await db.getTeams(ctx.user.id)
+  })
   .post(
-    '/team/:season',
+    '/team',
     requireAuth,
     validateBody(validators.Team, async (ctx) => {
-      ctx.body = {}
+      await db.saveTeam(ctx.user.id, ctx.request.body)
+      ctx.body = { status: 'ok' }
     })
   )
   .get('/seasons', async (ctx) => {

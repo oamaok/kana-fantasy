@@ -16,7 +16,7 @@ const initialize = async () => {
     const [seasons, roles, teams] = await Promise.all([
       api.getSeasons(),
       api.getRoles(),
-      Promise.resolve([]),
+      api.getTeams(),
     ])
     state.seasons = seasons
     state.roles = roles

@@ -19,7 +19,7 @@ type State = {
     endDate: string
     lockDate: string
   }[]
-  teams: Team[]
+  teams: null | Team[]
 }
 
 export const state = createState<State>({
@@ -30,7 +30,7 @@ export const state = createState<State>({
   roles: [],
   players: [],
   seasons: [],
-  teams: [],
+  teams: null,
 })
 
 export const t = (key: keyof Translations[keyof Translations]) => {
@@ -38,7 +38,7 @@ export const t = (key: keyof Translations[keyof Translations]) => {
 }
 
 export const getCurrentTeam = () =>
-  state.teams.find((team) => team.division === state.division)
+  state.teams?.find((team) => team.division === state.division)
 
 export const getCurrentTeamPlayers = () => {
   const team = getCurrentTeam()
@@ -55,7 +55,7 @@ export const addPlayerToCurrentTeam = (player: Player) => {
 
   team.players.push({
     steamId: player.steamId,
-    role: null,
+    roleId: null,
   })
 
   api.saveTeam(team)
@@ -66,6 +66,8 @@ export const removePlayerFromCurrentTeam = (player: Player) => {
   if (!team) return
 
   team.players = team.players.filter((p) => p.steamId !== player.steamId)
+
+  api.saveTeam(team)
 }
 
 export const getRemainingBudget = () => {

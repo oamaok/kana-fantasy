@@ -32,7 +32,7 @@ export const getRolesWithTargets = () => apiRequest('GET', 'roles/with-targets')
 export const saveRoles = (data: RoleUpdateRequest) =>
   apiRequest('POST', 'roles', data)
 export const saveTeam = (team: Team) => apiRequest('POST', 'team', team)
+export const getTeams = () => apiRequest('GET', 'teams')
 export const getSeasons = () => apiRequest('GET', 'seasons')
-
 export const saveSeasons = (seasons: SeasonUpdateRequest) =>
   apiRequest('POST', 'seasons', seasons)

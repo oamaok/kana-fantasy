@@ -11,24 +11,22 @@ const getMigrationVersion = (filename: string) =>
   parseInt(filename.split('-')[0])
 
 const migrate = async () => {
-  const connection = await db.getConnection()
-  await connection.query(
+  const client = await db.getClient()
+  await client.query(
     SQL`CREATE TABLE IF NOT EXISTS version (version INTEGER PRIMARY KEY DEFAULT 0)`
   )
   const {
     rows: [{ count }],
-  } = await connection.query<{ count: string }>(
+  } = await client.query<{ count: string }>(
     SQL`SELECT COUNT(*) AS count FROM version`
   )
 
   if (count === '0') {
-    await connection.query(SQL`INSERT INTO version (version) VALUES (0)`)
+    await client.query(SQL`INSERT INTO version (version) VALUES (0)`)
   }
   const {
     rows: [{ version }],
-  } = await connection.query<{ version: number }>(
-    SQL`SELECT version FROM version`
-  )
+  } = await client.query<{ version: number }>(SQL`SELECT version FROM version`)
 
   const migrationFiles = await fs.readdir(
     path.resolve(__dirname, '../migrations')
@@ -40,34 +38,34 @@ const migrate = async () => {
 
   if (applicableMigrations.length === 0) {
     console.log('No migrations to run.')
-    await connection.release()
+    await client.release()
     return
   }
 
   for (const migration of applicableMigrations) {
     console.log('Running migration ', migration)
-    await connection.query(SQL`BEGIN`)
+    await client.query(SQL`BEGIN`)
     try {
       const {
         default: { up },
       } = require(`../migrations/${migration}`)
       await up(db)
-      await connection.query(
+      await client.query(
         SQL`UPDATE version SET version = ${getMigrationVersion(migration)}`
       )
-      await connection.query(SQL`COMMIT`)
+      await client.query(SQL`COMMIT`)
     } catch (err) {
-      await connection.query(SQL`ROLLBACK`)
+      await client.query(SQL`ROLLBACK`)
       console.error('Failed to run migration ', migration)
       console.error(err)
 
-      await connection.release()
+      await client.release()
       process.exit(1)
       return
     }
   }
 
-  await connection.release()
+  await client.release()
 }
 
 export default migrate

@@ -85,6 +85,23 @@ const Teams = () => {
     return () => document.removeEventListener('scroll', scrollHandler)
   })
 
+  useEffect(() => {
+    const currentTeam = getCurrentTeam()
+
+    console.log({ currentTeam })
+
+    if (state.teams && !currentTeam) {
+      console.log(state.teams)
+
+      state.teams.push({
+        name: `Paras ${state.division} joukkue`,
+        division: state.division,
+        season: parseInt(state.route!.params.season),
+        players: [],
+      })
+    }
+  })
+
   const team = getCurrentTeam()
   const players = getCurrentTeamPlayers()
   const budgetRemaining = getRemainingBudget()

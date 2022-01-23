@@ -5,10 +5,11 @@ import {
   PlayerRole,
   RoleUpdateRequest,
   SeasonUpdateRequest,
+  Team,
 } from '../common/validators'
 
 let _pool: null | Pool = null
-export const getConnection = (): Promise<PoolClient> => {
+export const getClient = (): Promise<PoolClient> => {
   if (!_pool) {
     _pool = new Pool({
       host: 'localhost',
@@ -27,34 +28,42 @@ type QueryResult<T> = T[] & {
   fields: PgQueryResult['fields']
 }
 
+const createQueryFn =
+  (client: PoolClient) =>
+  async <T = any>(statement: SQLStatement): Promise<QueryResult<T>> => {
+    const queryResult = await client.query<T>(statement)
+
+    const res: QueryResult<T> = (queryResult.rows ?? []) as QueryResult<T>
+    res.rowCount = queryResult.rowCount
+    res.command = queryResult.command
+    res.fields = queryResult.fields
+
+    return res
+  }
+
 export async function query<T = any>(
   statement: SQLStatement
 ): Promise<QueryResult<T>> {
-  const connection = await getConnection()
-  const queryResult = await connection.query<T>(statement)
-
-  const res: QueryResult<T> = (queryResult.rows ?? []) as QueryResult<T>
-  res.rowCount = queryResult.rowCount
-  res.command = queryResult.command
-  res.fields = queryResult.fields
-
-  await connection.release()
-
+  const client = await getClient()
+  const res = createQueryFn(client)(statement)
+  await client.release()
   return res
 }
 
-export const transact = async <T>(fn: (connection: PoolClient) => T) => {
-  const connection = await getConnection()
+export const transact = async <T>(
+  fn: (connection: { query: ReturnType<typeof createQueryFn> }) => T
+) => {
+  const client = await getClient()
   try {
-    await connection.query('BEGIN')
-    const result = await fn(connection)
-    await connection.query('COMMIT')
+    await client.query('BEGIN')
+    const result = await fn({ query: createQueryFn(client) })
+    await client.query('COMMIT')
     return result
   } catch (err) {
-    await connection.query('ROLLBACK')
+    await client.query('ROLLBACK')
     throw err
   } finally {
-    await connection.release()
+    await client.release()
   }
 }
 
@@ -167,4 +176,76 @@ export const saveRoles = async (roles: RoleUpdateRequest) => {
   )
 
   return getRolesWithTargets()
+}
+
+type FantasyTeam = {
+  id: number
+  name: string
+  userId: string
+  seasonId: number
+  division: string
+}
+
+export const saveTeam = (userId: string, team: Team) => {
+  return transact(async ({ query }) => {
+    const [existingTeam] = await query<{ id: number }>(SQL`
+      SELECT id FROM "fantasyTeam"
+      WHERE
+        "userId" = ${userId} AND
+        "seasonId" = ${team.season} AND
+        "division" = ${team.division}
+    `)
+
+    let teamId
+
+    if (existingTeam) {
+      teamId = existingTeam.id
+      await query(
+        SQL`UPDATE "fantasyTeam" SET "name" = ${team.name} WHERE "id" = ${teamId}`
+      )
+    } else {
+      const [{ id }] = await query<{ id: number }>(SQL`
+        INSERT INTO "fantasyTeam" ("name", "userId", "seasonId", "division")
+        VALUES (${team.name}, ${userId}, ${team.season}, ${team.division})
+        RETURNING "id"
+      `)
+      teamId = id
+    }
+
+    await query(
+      SQL`DELETE FROM "fantasyTeam_player" WHERE "teamId" = ${teamId}`
+    )
+
+    for (const player of team.players) {
+      await query(SQL`
+        INSERT INTO "fantasyTeam_player" ("teamId", "playerId", "roleId", "seasonId")
+        VALUES (${teamId}, ${player.steamId}, ${player.role}, ${team.season})        
+      `)
+    }
+  })
+}
+
+export const getTeams = async (userId: string): Promise<Team[]> => {
+  const teams = await query(SQL`
+    SELECT *
+    FROM "fantasyTeam"
+  `)
+
+  return Promise.all(
+    teams.map(async (team) => {
+      const players = await query<{
+        steamId: string
+        roleId: number | null
+      }>(SQL`
+      SELECT "playerId" as "steamId", "roleId" FROM "fantasyTeam_player" WHERE "teamId" = ${team.id}
+    `)
+
+      return {
+        name: team.name,
+        season: team.seasonId,
+        division: team.division,
+        players,
+      }
+    })
+  )
 }
