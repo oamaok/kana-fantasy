@@ -48,11 +48,13 @@
 .selected {
   opacity: 0.5;
   filter: grayscale(50%);
+  pointer-events: none;
 }
 
 .too-expensive {
   opacity: 0.5;
   filter: grayscale(50%);
+  pointer-events: none;
 }
 
 .too-expensive .price {

@@ -23,6 +23,7 @@ export const handleOAuth = async () => {
 export type User = {
   id: string
   avatar: string
+  isAdmin: boolean
   username: string
 }
 

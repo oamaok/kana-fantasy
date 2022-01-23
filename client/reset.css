@@ -46,6 +46,10 @@ html {
   font-size: 14px;
 }
 
+body {
+  overflow-y: scroll;
+}
+
 input[type='date'],
 input[type='text'],
 input[type='number'],

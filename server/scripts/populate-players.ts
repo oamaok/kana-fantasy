@@ -65,7 +65,7 @@ const main = async () => {
     VALUES
       (${record.steamId}, ${record.name}, ${record.avatar}, ${
       record.teamName
-    }, ${record.price}, ${2}, ${record.division})    
+    }, ${record.price}, ${1}, ${record.division})    
     `)
 
     console.log(++i / records.length)

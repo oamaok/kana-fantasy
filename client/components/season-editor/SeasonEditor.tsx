@@ -22,9 +22,10 @@ const SeasonEditor = () => {
   const editor = useState({
     seasons: [] as Season[],
   })
-  useEffect(async () => {
-    const seasons = await api.getSeasons()
-    editor.seasons = seasons.map(formatDates)
+  useEffect(() => {
+    api.getSeasons().then((seasons) => {
+      editor.seasons = seasons.map(formatDates)
+    })
   })
 
   return (

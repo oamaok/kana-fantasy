@@ -1,4 +1,4 @@
-import { h, useState } from 'kaiku'
+import { h, useState, useEffect, useRef } from 'kaiku'
 import {
   state,
   getCurrentTeam,
@@ -24,6 +24,7 @@ const divisions = [
 
 const onDivisionSelect = async (evt: InputEvent) => {
   state.division = (evt.target as HTMLSelectElement).value
+  state.players = []
   state.players = await api.getPlayers(
     state.route!.params.season,
     state.division
@@ -31,13 +32,67 @@ const onDivisionSelect = async (evt: InputEvent) => {
 }
 
 const Teams = () => {
+  const marginRef = useRef<HTMLDivElement>()
+  const sidebarRef = useRef<HTMLDivElement>()
+
+  useEffect(() => {
+    api
+      .getPlayers(state.route!.params.season, state.division)
+      .then((players) => {
+        state.players = players
+      })
+
+    let scrollTop = document.documentElement.scrollTop
+    let previousDirection: 'DOWN' | 'UP' | null = null
+
+    const scrollHandler = (evt: Event) => {
+      const direction =
+        document.documentElement.scrollTop < scrollTop ? 'UP' : 'DOWN'
+      scrollTop = document.documentElement.scrollTop
+
+      if (previousDirection === direction) return
+      previousDirection = direction
+
+      if (marginRef.current && sidebarRef.current) {
+        const sidebarHeight = sidebarRef.current.getBoundingClientRect().height
+
+        if (sidebarHeight < window.innerHeight - 100) {
+          marginRef.current.style.marginTop = '0px'
+          sidebarRef.current.style.top = `${100}px`
+          return
+        }
+
+        if (direction === 'DOWN') {
+          marginRef.current.style.marginTop = `${scrollTop}px`
+          sidebarRef.current.style.top = `${
+            window.innerHeight - sidebarHeight
+          }px`
+          sidebarRef.current.style.bottom = ''
+        } else {
+          marginRef.current.style.marginTop = `${
+            scrollTop + (window.innerHeight - sidebarHeight - 100)
+          }px`
+          sidebarRef.current.style.bottom = `${
+            window.innerHeight - sidebarHeight - 100
+          }px`
+          sidebarRef.current.style.top = ''
+        }
+      }
+    }
+
+    document.addEventListener('scroll', scrollHandler)
+
+    return () => document.removeEventListener('scroll', scrollHandler)
+  })
+
   const team = getCurrentTeam()
   const players = getCurrentTeamPlayers()
   const budgetRemaining = getRemainingBudget()
 
   return (
     <div className={styles('wrapper')}>
-      <div className={styles('teams')}>
+      <div ref={marginRef} />
+      <div className={styles('teams')} ref={sidebarRef}>
         <div className={styles('title')}>Joukkueesi</div>
         <div className={styles('details')}>
           <div className={styles('field')}>
@@ -51,7 +106,7 @@ const Teams = () => {
             </select>
           </div>
 
-          {team ? (
+          {team && (
             <div className={styles('team')}>
               <div className={styles('field')}>
                 <label>Nimi</label>
@@ -99,22 +154,6 @@ const Teams = () => {
                     <div className={styles('slot', 'empty')}>Tyhjä</div>
                   ))}
               </div>
-            </div>
-          ) : (
-            <div className={styles('new-team')}>
-              <div>Sinulla ei ole vielä joukkuetta tässä divisioonassa.</div>
-              <Button
-                onClick={() => {
-                  state.teams.push({
-                    name: `Maailman paras ${state.division} joukkue`,
-                    season: 9,
-                    division: state.division,
-                    players: [],
-                  })
-                }}
-              >
-                + Luo uusi joukkue
-              </Button>
             </div>
           )}
         </div>

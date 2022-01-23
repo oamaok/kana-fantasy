@@ -3,6 +3,7 @@ import { state } from '../../state'
 import Authentication from '../authentication/Authentication'
 import Routes from '../../Routes'
 import Header from '../header/Header'
+import styles from './App.css'
 
 const App = () => {
   if (state.route?.name === 'oauth-callback' || state.auth.type === 'loading') {
@@ -10,12 +11,13 @@ const App = () => {
   }
 
   return (
-    <>
+    <div className={styles('app')}>
       <Header />
-      <div>
+      <div className={styles('content')}>
         {state.auth.type === 'authenticated' ? <Routes /> : <Authentication />}
       </div>
-    </>
+      <div className={styles('footer')}>Footer</div>
+    </div>
   )
 }
 
