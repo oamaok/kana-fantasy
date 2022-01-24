@@ -1,5 +1,5 @@
 import { h, render } from 'kaiku'
-import { state } from './state'
+import { getOngoingSeason, state } from './state'
 import { navigateTo } from './router'
 import * as api from './api'
 import App from './components/app/App'
@@ -21,6 +21,12 @@ const initialize = async () => {
     state.seasons = seasons
     state.roles = roles
     state.teams = teams
+
+    const ongoingSeason = getOngoingSeason()
+
+    if (ongoingSeason) {
+      state.players = await api.getPlayers(ongoingSeason.id, 'Masters')
+    }
   }
 }
 

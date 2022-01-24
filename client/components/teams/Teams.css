@@ -3,12 +3,7 @@
 }
 
 .teams {
-  position: sticky;
-  width: 400px;
-  color: #fff;
-  margin-right: 20px;
-  background-color: #333;
-  border-bottom: 4px solid #555;
+  width: 100%;
 }
 
 .title {

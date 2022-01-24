@@ -74,3 +74,11 @@ export const getRemainingBudget = () => {
   const players = getCurrentTeamPlayers()
   return 1000000 - players.reduce((sum, player) => sum + player.price, 0)
 }
+
+export const getOngoingSeason = () => {
+  const now = new Date()
+
+  return state.seasons.find((season) => {
+    return new Date(season.startDate) < now && new Date(season.endDate) > now
+  })
+}

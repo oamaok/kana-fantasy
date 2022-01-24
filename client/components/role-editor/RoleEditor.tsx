@@ -11,8 +11,6 @@ const getBoundaries = (
   target: StatTarget,
   stats: Record<Stat, number[]> | null
 ): [number, number] => {
-  console.log(target, stats)
-
   if (!stats) return [0, 0]
 
   const values = stats[target.stat]

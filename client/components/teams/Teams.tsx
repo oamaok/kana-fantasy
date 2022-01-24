@@ -5,6 +5,7 @@ import {
   getCurrentTeamPlayers,
   removePlayerFromCurrentTeam,
   getRemainingBudget,
+  getOngoingSeason,
 } from '../../state'
 import * as api from '../../api'
 import styles from './Teams.css'
@@ -32,85 +33,40 @@ const onDivisionSelect = async (evt: InputEvent) => {
 }
 
 const Teams = () => {
-  const marginRef = useRef<HTMLDivElement>()
-  const sidebarRef = useRef<HTMLDivElement>()
-
-  useEffect(() => {
-    api
-      .getPlayers(state.route!.params.season, state.division)
-      .then((players) => {
-        state.players = players
-      })
-
-    let scrollTop = document.documentElement.scrollTop
-    let previousDirection: 'DOWN' | 'UP' | null = null
-
-    const scrollHandler = (evt: Event) => {
-      const direction =
-        document.documentElement.scrollTop < scrollTop ? 'UP' : 'DOWN'
-      scrollTop = document.documentElement.scrollTop
-
-      if (previousDirection === direction) return
-      previousDirection = direction
-
-      if (marginRef.current && sidebarRef.current) {
-        const sidebarHeight = sidebarRef.current.getBoundingClientRect().height
-
-        if (sidebarHeight < window.innerHeight - 100) {
-          marginRef.current.style.marginTop = '0px'
-          sidebarRef.current.style.top = `${100}px`
-          return
-        }
-
-        if (direction === 'DOWN') {
-          marginRef.current.style.marginTop = `${scrollTop}px`
-          sidebarRef.current.style.top = `${
-            window.innerHeight - sidebarHeight
-          }px`
-          sidebarRef.current.style.bottom = ''
-        } else {
-          marginRef.current.style.marginTop = `${
-            scrollTop + (window.innerHeight - sidebarHeight - 100)
-          }px`
-          sidebarRef.current.style.bottom = `${
-            window.innerHeight - sidebarHeight - 100
-          }px`
-          sidebarRef.current.style.top = ''
-        }
-      }
-    }
-
-    document.addEventListener('scroll', scrollHandler)
-
-    return () => document.removeEventListener('scroll', scrollHandler)
-  })
+  const ongoingSeason = getOngoingSeason()
 
   useEffect(() => {
     const currentTeam = getCurrentTeam()
 
-    console.log({ currentTeam })
-
     if (state.teams && !currentTeam) {
-      console.log(state.teams)
-
-      state.teams.push({
-        name: `Paras ${state.division} joukkue`,
-        division: state.division,
-        season: parseInt(state.route!.params.season),
-        players: [],
-      })
+      // Needs to be deferred
+      // TODO: Fix in kaiku
+      const ongoingSeason = getOngoingSeason()
+      if (ongoingSeason) {
+        requestAnimationFrame(() => {
+          state.teams?.push({
+            name: '',
+            division: state.division,
+            season: ongoingSeason.id,
+            players: [],
+          })
+        })
+      }
     }
   })
+
+  if (!ongoingSeason) {
+    return <div>Ei meneillään olevaa kautta</div>
+  }
 
   const team = getCurrentTeam()
   const players = getCurrentTeamPlayers()
   const budgetRemaining = getRemainingBudget()
+  const teamsLocked = new Date(ongoingSeason?.lockDate)
 
   return (
     <div className={styles('wrapper')}>
-      <div ref={marginRef} />
-      <div className={styles('teams')} ref={sidebarRef}>
-        <div className={styles('title')}>Joukkueesi</div>
+      <div className={styles('teams')}>
         <div className={styles('details')}>
           <div className={styles('field')}>
             <label>Divisioona</label>
@@ -125,16 +81,6 @@ const Teams = () => {
 
           {team && (
             <div className={styles('team')}>
-              <div className={styles('field')}>
-                <label>Nimi</label>
-                <input
-                  type="text"
-                  value={team.name}
-                  onInput={(evt: InputEvent) => {
-                    team.name = (evt.target as HTMLInputElement).value
-                  }}
-                />
-              </div>
               <div
                 className={styles('budget', {
                   'over-budget': budgetRemaining < 0,

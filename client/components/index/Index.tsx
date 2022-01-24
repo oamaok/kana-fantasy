@@ -1,14 +1,10 @@
 import { h } from 'kaiku'
 import { navigateTo } from '../../router'
-import { state } from '../../state'
+import { getOngoingSeason, state } from '../../state'
 
 const Index = () => {
   const now = new Date()
-
-  const ongoingSeason = state.seasons.find((season) => {
-    return new Date(season.startDate) < now && new Date(season.endDate) > now
-  })
-
+  const ongoingSeason = getOngoingSeason()
   const signupsOpen = ongoingSeason && new Date(ongoingSeason.lockDate) > now
 
   if (signupsOpen) {

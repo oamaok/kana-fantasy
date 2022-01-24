@@ -4,6 +4,7 @@ import { navigateTo } from './router'
 import AdminPanel from './components/admin-panel/AdminPanel'
 import TeamBuilder from './components/team-builder/TeamBuilder'
 import Index from './components/index/Index'
+import PlayerSelector from './components/player-selector/PlayerSelector'
 
 const Router = () => {
   if (!state.route) {
@@ -14,7 +15,7 @@ const Router = () => {
     case 'index':
       return <Index />
     case 'team-builder':
-      return <TeamBuilder />
+      return <PlayerSelector />
     case 'scoreboard':
       return <div>scoreboard</div>
     case 'admin':

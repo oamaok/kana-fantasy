@@ -219,7 +219,7 @@ export const saveTeam = (userId: string, team: Team) => {
     for (const player of team.players) {
       await query(SQL`
         INSERT INTO "fantasyTeam_player" ("teamId", "playerId", "roleId", "seasonId")
-        VALUES (${teamId}, ${player.steamId}, ${player.role}, ${team.season})        
+        VALUES (${teamId}, ${player.steamId}, ${player.roleId}, ${team.season})        
       `)
     }
   })

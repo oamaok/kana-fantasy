@@ -4,7 +4,7 @@
   "description": "Kanaliiga fantasy league",
   "main": "index.js",
   "scripts": {
-    "start": "",
+    "start": "concurrently npm:start:database npm:start:server npm:start:client",
     "start:client": "node build",
     "start:server": "tsnd --transpile-only --respawn server/index.ts",
     "start:database": "docker-compose up"
@@ -21,7 +21,9 @@
     "@types/node-fetch": "^3.0.3",
     "@types/pg": "^8.6.4",
     "classnames": "^2.3.1",
+    "concurrently": "^7.0.0",
     "cssnano": "^5.0.15",
+    "date-fns": "^2.28.0",
     "discord-oauth2": "^2.9.0",
     "dotenv": "^14.2.0",
     "esbuild": "^0.14.11",
