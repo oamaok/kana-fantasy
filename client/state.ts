@@ -18,6 +18,7 @@ type State = {
     startDate: string
     endDate: string
     lockDate: string
+    divisions: string[]
   }[]
   teams: null | Team[]
 }
@@ -31,6 +32,10 @@ export const state = createState<State>({
   players: [],
   seasons: [],
   teams: null,
+})
+
+window.addEventListener('popstate', () => {
+  state.route = matchRoute(location)
 })
 
 export const t = (key: keyof Translations[keyof Translations]) => {
@@ -57,8 +62,6 @@ export const addPlayerToCurrentTeam = (player: Player) => {
     steamId: player.steamId,
     roleId: null,
   })
-
-  api.saveTeam(team)
 }
 
 export const removePlayerFromCurrentTeam = (player: Player) => {
@@ -81,4 +84,8 @@ export const getOngoingSeason = () => {
   return state.seasons.find((season) => {
     return new Date(season.startDate) < now && new Date(season.endDate) > now
   })
+}
+
+export const getIsAdmin = () => {
+  return state.auth.type === 'authenticated' && state.auth.user.isAdmin
 }

@@ -3,21 +3,29 @@ import { navigateTo } from './router'
 import { state } from './state'
 
 export const handleOAuth = async () => {
+  state.auth = { type: 'loading' }
+
   const code = new URL(location.href).searchParams.get('code')
+  navigateTo('/')
+
   if (!code) {
-    navigateTo('/')
     return
   }
 
-  const { token, user } = await api.authRequest(code)
+  try {
+    const { token, user } = await api.authRequest(code)
 
-  state.auth = {
-    type: 'authenticated',
-    user,
+    state.auth = {
+      type: 'authenticated',
+      user,
+    }
+
+    localStorage.setItem('kanafantasy_token', token)
+  } catch (err) {
+    state.auth = {
+      type: 'unauthenticated',
+    }
   }
-
-  localStorage.setItem('kanafantasy_token', token)
-  navigateTo('/')
 }
 
 export type User = {
@@ -52,8 +60,13 @@ export const getInitialAuthState = (): AuthState => {
 }
 
 export const inititializeAuth = async () => {
+  state.auth = { type: 'loading' }
+
   const token = localStorage.getItem('kanafantasy_token')
   if (!token) {
+    state.auth = {
+      type: 'unauthenticated',
+    }
     return
   }
 

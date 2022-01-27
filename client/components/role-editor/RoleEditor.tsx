@@ -45,13 +45,13 @@ const RoleEditor = () => {
     stats: null as Record<Stat, number[]> | null,
   })
 
-  useEffect(async () => {
-    const roles = await api.getRolesWithTargets()
-    editor.roles = roles
-
-    editor.stats = immutable(
-      await fetch('/assets/stats.json').then((res) => res.json())
-    )
+  useEffect(() => {
+    api.getRolesWithTargets().then(async (roles) => {
+      editor.roles = roles
+      editor.stats = immutable(
+        await fetch('/assets/stats.json').then((res) => res.json())
+      )
+    })
   })
 
   return (

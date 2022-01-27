@@ -10,7 +10,7 @@ const Index = () => {
   if (signupsOpen) {
     return (
       <div>
-        <button onClick={() => navigateTo('/team-builder/' + ongoingSeason.id)}>
+        <button onClick={() => navigateTo('/team-builder/')}>
           Osallistu kaudelle {ongoingSeason.name}
         </button>
       </div>

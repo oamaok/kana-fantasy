@@ -7,7 +7,7 @@ import {
   getRemainingBudget,
   getOngoingSeason,
 } from '../../state'
-import * as api from '../../api'
+import { formatDistance } from 'date-fns'
 import styles from './Teams.css'
 import { formatPrice } from '../../utils'
 import Button from '../button/Button'
@@ -23,17 +23,23 @@ const divisions = [
   'div7',
 ]
 
-const onDivisionSelect = async (evt: InputEvent) => {
-  state.division = (evt.target as HTMLSelectElement).value
-  state.players = []
-  state.players = await api.getPlayers(
-    state.route!.params.season,
-    state.division
-  )
-}
-
 const Teams = () => {
-  const ongoingSeason = getOngoingSeason()
+  const localState = useState({
+    timeUntilLocked: '----',
+  })
+
+  useEffect(() => {
+    let interval = setInterval(() => {
+      const ongoingSeason = getOngoingSeason()
+      if (!ongoingSeason) return
+
+      localState.timeUntilLocked = formatDistance(
+        new Date(),
+        new Date(ongoingSeason.lockDate)
+      )
+    }, 1000)
+    return () => clearInterval(interval)
+  })
 
   useEffect(() => {
     const currentTeam = getCurrentTeam()
@@ -55,6 +61,8 @@ const Teams = () => {
     }
   })
 
+  const ongoingSeason = getOngoingSeason()
+
   if (!ongoingSeason) {
     return <div>Ei meneillään olevaa kautta</div>
   }
@@ -64,23 +72,16 @@ const Teams = () => {
   const budgetRemaining = getRemainingBudget()
   const teamsLocked = new Date(ongoingSeason?.lockDate)
 
+  const isTeamFull = players.length === 5
+
   return (
     <div className={styles('wrapper')}>
       <div className={styles('teams')}>
-        <div className={styles('details')}>
-          <div className={styles('field')}>
-            <label>Divisioona</label>
-            <select onChange={onDivisionSelect}>
-              {divisions.map((division) => (
-                <option value={division} selected={state.division === division}>
-                  {division}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {team && (
-            <div className={styles('team')}>
+        {team && (
+          <div className={styles('team')}>
+            {isTeamFull ? (
+              <button className={styles('buy')}>Osta joukkue</button>
+            ) : (
               <div
                 className={styles('budget', {
                   'over-budget': budgetRemaining < 0,
@@ -88,38 +89,37 @@ const Teams = () => {
               >
                 {formatPrice(budgetRemaining)}
               </div>
-              <div className={styles('players')}>
-                {players.map((player) => (
-                  <div className={styles('slot')}>
-                    <div className={styles('top-half')}>
-                      <img src={player.avatar} className={styles('avatar')} />
-                      <div className={styles('details')}>
-                        <div className={styles('name')}>{player.username}</div>
-                        <div className={styles('role-selector')}>
-                          Valitse rooli...
-                        </div>
-                      </div>
-                      <button
-                        className={styles('remove')}
-                        onClick={() => removePlayerFromCurrentTeam(player)}
-                      >
-                        x
-                      </button>
+            )}
+
+            <div className={styles('players')}>
+              {players.map((player) => (
+                <div className={styles('slot')}>
+                  <div className={styles('top-half')}>
+                    <img src={player.avatar} className={styles('avatar')} />
+                    <div className={styles('details')}>
+                      <div className={styles('team')}>{player.team}</div>
+                      <div className={styles('name')}>{player.username}</div>
                     </div>
-                    <div className={styles('price')}>
-                      {formatPrice(player.price)}
-                    </div>
+                    <button
+                      className={styles('remove')}
+                      onClick={() => removePlayerFromCurrentTeam(player)}
+                    >
+                      x
+                    </button>
                   </div>
+                  <div className={styles('price')}>
+                    {formatPrice(player.price)}
+                  </div>
+                </div>
+              ))}
+              {Array(5 - players.length)
+                .fill(null)
+                .map(() => (
+                  <div className={styles('slot', 'empty')}>Tyhjä</div>
                 ))}
-                {Array(5 - players.length)
-                  .fill(null)
-                  .map(() => (
-                    <div className={styles('slot', 'empty')}>Tyhjä</div>
-                  ))}
-              </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   )

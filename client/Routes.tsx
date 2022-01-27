@@ -5,17 +5,24 @@ import AdminPanel from './components/admin-panel/AdminPanel'
 import TeamBuilder from './components/team-builder/TeamBuilder'
 import Index from './components/index/Index'
 import PlayerSelector from './components/player-selector/PlayerSelector'
+import Authentication from './components/authentication/Authentication'
 
 const Router = () => {
   if (!state.route) {
     return <div>404</div>
   }
 
+  if (state.route.name === 'index') {
+    return <Index />
+  }
+
+  if (state.auth.type === 'unauthenticated') {
+    return <Authentication />
+  }
+
   switch (state.route.name) {
-    case 'index':
-      return <Index />
     case 'team-builder':
-      return <PlayerSelector />
+      return <TeamBuilder />
     case 'scoreboard':
       return <div>scoreboard</div>
     case 'admin':

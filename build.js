@@ -110,7 +110,7 @@ esbuild.build({
   entryPoints: ['client/reset.css', 'client/index.tsx'],
   outdir: 'dist/assets',
   define: {
-    'process.env.NODE_ENV': '"production"',
+    'process.env.NODE_ENV': '"development"',
     __ENVIRONMENT__: '"development"',
   },
   minify: false,

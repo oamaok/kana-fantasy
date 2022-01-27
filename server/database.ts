@@ -93,13 +93,35 @@ export const upsertUser = async (user: OAuth.User) => {
 }
 
 export const getPlayers = (seasonId: number, division: string) => {
-  return query(SQL`
-    SELECT * FROM "player"
+  return query<{
+    steamId: string
+    username: string
+    avatar: string
+    price: number
+    seasonId: number
+    division: string
+    team: string
+  }>(SQL`
+    SELECT
+      "player"."steamId",
+      "player"."username",
+      "player"."avatar",
+      "player"."price",
+      "player"."seasonId",
+      "player"."division",
+      "team"."name" AS "team"
+    FROM "player"
+    JOIN "team" ON "team"."id" = "player"."teamId"
     WHERE
       "seasonId" = ${seasonId} AND
       "division" = ${division}
   `)
 }
+
+export const getDivisions = (seasonId: number) =>
+  query<{ division: string }>(
+    SQL`SELECT DISTINCT "division" FROM "player" WHERE "seasonId" = ${seasonId}`
+  ).then((divisions) => divisions.map(({ division }) => division))
 
 export const getRoles = async () => {
   return query<Omit<PlayerRole, 'targets'>>(SQL`
@@ -107,14 +129,25 @@ export const getRoles = async () => {
   `)
 }
 
-export const getSeasons = () => {
-  return query<{
-    id: string
+export const getSeasons = async () => {
+  const seasons = await query<{
+    id: number
     name: string
     startDate: Date
     endDate: Date
     lockDate: Date
   }>(SQL`SELECT * FROM "season"`)
+
+  return Promise.all(
+    seasons.map(async (season) => {
+      const divisions = await getDivisions(season.id)
+
+      return {
+        ...season,
+        divisions,
+      }
+    })
+  )
 }
 
 export const saveSeasons = async (seasons: SeasonUpdateRequest) => {

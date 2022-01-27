@@ -8,7 +8,7 @@ const routes = [
   },
   {
     name: 'team-builder',
-    match: '/team-builder/:season',
+    match: '/team-builder',
   },
   {
     name: 'oauth-callback',

@@ -180,9 +180,11 @@ apiRouter
     ctx.body = await db.getTeams(ctx.user.id)
   })
   .post(
-    '/team',
+    '/team/buy',
     requireAuth,
     validateBody(validators.Team, async (ctx) => {
+      // TODO: Validate price and team limits
+
       await db.saveTeam(ctx.user.id, ctx.request.body)
       ctx.body = { status: 'ok' }
     })
