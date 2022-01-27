@@ -184,9 +184,7 @@ apiRouter
     requireAuth,
     validateBody(validators.Team, async (ctx) => {
       // TODO: Validate price and team limits
-
-      await db.saveTeam(ctx.user.id, ctx.request.body)
-      ctx.body = { status: 'ok' }
+      ctx.body = { id: await db.buyTeam(ctx.user.id, ctx.request.body) }
     })
   )
   .get('/seasons', async (ctx) => {

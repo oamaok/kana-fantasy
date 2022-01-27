@@ -7,6 +7,7 @@ import {
   SeasonUpdateRequest,
   Team,
 } from '../common/validators'
+import id from 'date-fns/locale/id'
 
 let _pool: null | Pool = null
 export const getClient = (): Promise<PoolClient> => {
@@ -219,49 +220,35 @@ type FantasyTeam = {
   division: string
 }
 
-export const saveTeam = (userId: string, team: Team) => {
-  return transact(async ({ query }) => {
-    const [existingTeam] = await query<{ id: number }>(SQL`
-      SELECT id FROM "fantasyTeam"
-      WHERE
-        "userId" = ${userId} AND
-        "seasonId" = ${team.season} AND
-        "division" = ${team.division}
+export const buyTeam = (userId: string, team: Team) =>
+  transact(async ({ query }) => {
+    const [{ id }] = await query<{ id: number }>(SQL`
+      INSERT INTO "fantasyTeam" ("name", "userId", "seasonId", "division", "bought")
+      VALUES (${team.name}, ${userId}, ${team.season}, ${team.division}, true)
+      RETURNING "id"
     `)
-
-    let teamId
-
-    if (existingTeam) {
-      teamId = existingTeam.id
-      await query(
-        SQL`UPDATE "fantasyTeam" SET "name" = ${team.name} WHERE "id" = ${teamId}`
-      )
-    } else {
-      const [{ id }] = await query<{ id: number }>(SQL`
-        INSERT INTO "fantasyTeam" ("name", "userId", "seasonId", "division")
-        VALUES (${team.name}, ${userId}, ${team.season}, ${team.division})
-        RETURNING "id"
-      `)
-      teamId = id
-    }
-
-    await query(
-      SQL`DELETE FROM "fantasyTeam_player" WHERE "teamId" = ${teamId}`
-    )
 
     for (const player of team.players) {
       await query(SQL`
         INSERT INTO "fantasyTeam_player" ("teamId", "playerId", "roleId", "seasonId")
-        VALUES (${teamId}, ${player.steamId}, ${player.roleId}, ${team.season})        
+        VALUES (${id}, ${player.steamId}, ${player.roleId}, ${team.season})        
       `)
     }
+
+    return id
   })
-}
 
 export const getTeams = async (userId: string): Promise<Team[]> => {
-  const teams = await query(SQL`
+  const teams = await query<{
+    id: string
+    name: string
+    bought: boolean
+    seasonId: number
+    division: string
+  }>(SQL`
     SELECT *
     FROM "fantasyTeam"
+    WHERE "userId" = ${userId}
   `)
 
   return Promise.all(
@@ -274,7 +261,9 @@ export const getTeams = async (userId: string): Promise<Team[]> => {
     `)
 
       return {
+        id: team.id,
         name: team.name,
+        bought: team.bought,
         season: team.seasonId,
         division: team.division,
         players,

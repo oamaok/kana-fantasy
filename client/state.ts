@@ -69,8 +69,6 @@ export const removePlayerFromCurrentTeam = (player: Player) => {
   if (!team) return
 
   team.players = team.players.filter((p) => p.steamId !== player.steamId)
-
-  api.saveTeam(team)
 }
 
 export const getRemainingBudget = () => {

@@ -1,4 +1,4 @@
-import { h, useState, useEffect, useRef } from 'kaiku'
+import { h, useEffect } from 'kaiku'
 import {
   state,
   getCurrentTeam,
@@ -7,40 +7,19 @@ import {
   getRemainingBudget,
   getOngoingSeason,
 } from '../../state'
-import { formatDistance } from 'date-fns'
+import * as api from '../../api'
 import styles from './Teams.css'
 import { formatPrice } from '../../utils'
-import Button from '../button/Button'
 
-const divisions = [
-  'Masters',
-  'Challengers',
-  'div2',
-  'div3',
-  'div4',
-  'div5',
-  'div6',
-  'div7',
-]
+const buyTeam = () => {
+  const team = getCurrentTeam()
+  if (!team) return
+  team.bought = true
+
+  api.buyTeam(team)
+}
 
 const Teams = () => {
-  const localState = useState({
-    timeUntilLocked: '----',
-  })
-
-  useEffect(() => {
-    let interval = setInterval(() => {
-      const ongoingSeason = getOngoingSeason()
-      if (!ongoingSeason) return
-
-      localState.timeUntilLocked = formatDistance(
-        new Date(),
-        new Date(ongoingSeason.lockDate)
-      )
-    }, 1000)
-    return () => clearInterval(interval)
-  })
-
   useEffect(() => {
     const currentTeam = getCurrentTeam()
 
@@ -54,6 +33,7 @@ const Teams = () => {
             name: '',
             division: state.division,
             season: ongoingSeason.id,
+            bought: false,
             players: [],
           })
         })
@@ -70,7 +50,6 @@ const Teams = () => {
   const team = getCurrentTeam()
   const players = getCurrentTeamPlayers()
   const budgetRemaining = getRemainingBudget()
-  const teamsLocked = new Date(ongoingSeason?.lockDate)
 
   const isTeamFull = players.length === 5
 
@@ -80,7 +59,9 @@ const Teams = () => {
         {team && (
           <div className={styles('team')}>
             {isTeamFull ? (
-              <button className={styles('buy')}>Osta joukkue</button>
+              <button className={styles('buy')} onClick={buyTeam}>
+                Osta joukkue
+              </button>
             ) : (
               <div
                 className={styles('budget', {

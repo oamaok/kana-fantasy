@@ -67,19 +67,6 @@ const SeasonEditor = () => {
         </div>
       ))}
       <Button
-        onClick={() => {
-          editor.seasons.push({
-            id: null,
-            name: 'Uusi kausi',
-            startDate: toDateInputFormat(new Date()),
-            endDate: toDateInputFormat(new Date()),
-            lockDate: toDateInputFormat(new Date()),
-          })
-        }}
-      >
-        + Uusi kausi
-      </Button>
-      <Button
         onClick={async () => {
           // TODO: Maybe diff the seasons so only the ones changed
           // will be updated

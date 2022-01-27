@@ -1,0 +1,105 @@
+.role-selector {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #333;
+  border-bottom: 4px solid #555;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.title {
+  width: 100%;
+  text-align: center;
+  font-size: 32px;
+  font-weight: bold;
+  background-color: #f49703;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-family: 'Big Shoulders Display', sans-serif;
+  padding: 12px;
+}
+
+.players {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  background-color: #222;
+}
+
+.player-role {
+  width: 100%;
+  padding: 12px;
+  color: #fff;
+  background: #f49703;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.player-role.not-chosen {
+  color: #ccc;
+  background: #555;
+}
+
+.player {
+  background-color: #333;
+  display: flex;
+  flex-direction: column;
+  width: 20%;
+  padding: 12px;
+  color: #fff;
+  opacity: 0.5;
+  filter: grayscale(50%);
+  border-right: 4px solid #555;
+  box-shadow: inset 0 -2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.player.selected {
+  opacity: 1;
+  filter: none;
+  box-shadow: none;
+  border-color: #f49703;
+}
+
+.avatar {
+  width: 128px;
+  height: 128px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.roles {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding: 20px;
+  justify-content: space-evenly;
+}
+
+.role {
+  display: flex;
+  flex-direction: column;
+  color: #fff;
+  background: #555;
+  height: 200px;
+  width: 240px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  margin: 6px;
+}
+
+.role .name {
+  width: 100%;
+  background-color: #f49703;
+  text-transform: uppercase;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+  font-size: 24px;
+  font-family: 'Big Shoulders Display', sans-serif;
+  text-align: center;
+  padding: 12px;
+}
+
+.description {
+  padding: 12px;
+  text-align: left;
+}

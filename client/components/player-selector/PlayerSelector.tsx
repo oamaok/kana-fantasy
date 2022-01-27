@@ -1,11 +1,6 @@
-import { h, useEffect, useState } from 'kaiku'
-import {
-  getCurrentTeam,
-  getCurrentTeamPlayers,
-  getRemainingBudget,
-  state,
-} from '../../state'
-import * as api from '../../api'
+import { h } from 'kaiku'
+
+import { getCurrentTeam, getRemainingBudget, state } from '../../state'
 
 import styles from './PlayerSelector.css'
 import { Player } from '../../../common/types'

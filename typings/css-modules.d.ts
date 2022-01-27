@@ -1,6 +1,6 @@
-type ClassNames = string | { [key: string]: boolean } | ClassNames[]
+type ClassNames = string | { [key: string]: any } | ClassNames[]
 
 declare module '*.css' {
-  const classNames: (names: ClassNames) => string
+  const classNames: (...args: ClassNames[]) => string
   export = classNames
 }

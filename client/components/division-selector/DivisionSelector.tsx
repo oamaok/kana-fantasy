@@ -13,18 +13,6 @@ const onDivisionSelect = async (div: string) => {
   state.players = await api.getPlayers(ongoingSeason.id, state.division)
 }
 
-const divisions = [
-  'Masters',
-  'Challengers',
-  'div2',
-  'div3',
-  'div4',
-  'div5',
-  'div6',
-  'div7',
-  'div8',
-]
-
 const DivisionSelector = () => {
   const ongoingSeason = getOngoingSeason()
 

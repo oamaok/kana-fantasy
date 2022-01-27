@@ -7,8 +7,9 @@
     "jsx": "react-jsx",
     "jsxImportSource": "kaiku",
     "esModuleInterop": true,
+    "noUnusedLocals": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
   }
 }
