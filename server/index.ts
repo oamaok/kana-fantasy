@@ -14,6 +14,7 @@ import * as validators from '../common/validators'
 import * as db from './database'
 
 import migrate from './scripts/migrate'
+import { JwtData } from './jwt'
 dotenv.config()
 
 const DISCORD_OAUTH2_TOKEN_REVOKE_CREDENTIALS = Buffer.from(
@@ -26,8 +27,9 @@ const oauth = new OAuth({
   redirectUri: 'http://localhost:8080',
 })
 
-const app = new Koa()
-const apiRouter = new Router()
+type KoaContext = Koa.DefaultContext & { user?: JwtData }
+const app = new Koa<Koa.DefaultState, KoaContext>()
+const apiRouter = new Router<any, KoaContext>()
 
 const validateBody =
   <Decoder extends t.TypeC<any> | t.ArrayC<any>>(
@@ -64,7 +66,7 @@ const getAccessToken = (ctx: ParameterizedContext) => {
   return jwt.verify(ctx.headers.authorization ?? '')?.accessToken
 }
 
-const requireAuth = (ctx: ParameterizedContext, next: Next) => {
+const requireAuth: Router.IMiddleware<any, KoaContext> = (ctx, next) => {
   const user = jwt.verify(ctx.headers.authorization ?? '')
   if (!user) {
     ctx.status = 401
@@ -75,7 +77,7 @@ const requireAuth = (ctx: ParameterizedContext, next: Next) => {
   return next()
 }
 
-const requireAdmin = (ctx: ParameterizedContext, next: Next) => {
+const requireAdmin: Router.IMiddleware<any, KoaContext> = (ctx, next) => {
   const user = jwt.verify(ctx.headers.authorization ?? '')
   const isAdmin = user?.isAdmin
   if (!isAdmin) {
@@ -177,7 +179,7 @@ apiRouter
     ctx.body = { status: 'ok' }
   })
   .get('/teams', requireAuth, async (ctx) => {
-    ctx.body = await db.getTeams(ctx.user.id)
+    ctx.body = await db.getTeams(ctx.user!.id)
   })
   .post(
     '/team/buy',
