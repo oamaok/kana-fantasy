@@ -2,14 +2,16 @@ import fetch from 'node-fetch'
 import dotenv from 'dotenv'
 import * as db from '../database'
 import * as kanadb from '../kanadb'
-import data from '../../scraped-data.json'
 import SQL from 'sql-template-strings'
-import { string } from 'fp-ts'
 
 dotenv.config()
 
 const main = async () => {
   const teams = await kanadb.getSeason9Teams()
+
+  await db.query(SQL`DELETE FROM player`)
+  await db.query(SQL`DELETE FROM team`)
+  await db.query(SQL`DELETE FROM season`)
 
   const players = (
     await Promise.all(teams.map((team) => kanadb.getPlayersForTeam(team.id)))
@@ -90,6 +92,7 @@ const main = async () => {
     ).then((res: any) => res.json())
 
     for (const p of response.players) {
+      if (!playerRecords[p.steamid]) continue
       playerRecords[p.steamid].avatar = p.avatarfull
     }
 

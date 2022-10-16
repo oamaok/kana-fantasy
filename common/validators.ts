@@ -93,7 +93,7 @@ export type SeasonUpdateRequest = t.TypeOf<typeof SeasonUpdateRequest>
 
 export const TeamRoleUpdateRequest = t.type({
   id: t.string,
-  players: t.array(TeamPlayer)
+  players: t.array(TeamPlayer),
 })
 
 export type TeamRoleUpdateRequest = t.TypeOf<typeof TeamRoleUpdateRequest>

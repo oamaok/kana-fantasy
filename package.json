@@ -18,7 +18,7 @@
     "@types/koa-mount": "^4.0.1",
     "@types/koa-router": "^7.4.4",
     "@types/koa-static": "^4.0.2",
-    "@types/node-fetch": "^3.0.3",
+    "@types/node-fetch": "^2.6.2",
     "@types/pg": "^8.6.4",
     "classnames": "^2.3.1",
     "concurrently": "^7.0.0",

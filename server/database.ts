@@ -1,16 +1,20 @@
 import OAuth from 'discord-oauth2'
 import { SQL, SQLStatement } from 'sql-template-strings'
-import { Client, Pool, PoolClient, QueryResult as PgQueryResult } from 'pg'
+import {
+  Pool,
+  PoolClient,
+  QueryResult as PgQueryResult,
+  QueryResultRow,
+} from 'pg'
 import {
   PlayerRole,
   RoleUpdateRequest,
   SeasonUpdateRequest,
   Team,
 } from '../common/validators'
-import id from 'date-fns/locale/id'
 
 let _pool: null | Pool = null
-export const getClient = (): Promise<PoolClient> => {
+export const getClient = async (): Promise<PoolClient> => {
   if (!_pool) {
     _pool = new Pool({
       host: 'localhost',
@@ -20,7 +24,15 @@ export const getClient = (): Promise<PoolClient> => {
     })
   }
 
-  return _pool.connect()
+  for (;;) {
+    try {
+      const client = await _pool.connect()
+      return client
+    } catch (err) {
+      console.log('Waiting for database...')
+      await new Promise(resolve => setTimeout(resolve, 500))
+    }
+  }
 }
 
 type QueryResult<T> = T[] & {
@@ -31,7 +43,9 @@ type QueryResult<T> = T[] & {
 
 const createQueryFn =
   (client: PoolClient) =>
-  async <T = any>(statement: SQLStatement): Promise<QueryResult<T>> => {
+  async <T extends QueryResultRow>(
+    statement: SQLStatement
+  ): Promise<QueryResult<T>> => {
     const queryResult = await client.query<T>(statement)
 
     const res: QueryResult<T> = (queryResult.rows ?? []) as QueryResult<T>
@@ -42,11 +56,11 @@ const createQueryFn =
     return res
   }
 
-export async function query<T = any>(
+export async function query<T extends QueryResultRow>(
   statement: SQLStatement
 ): Promise<QueryResult<T>> {
   const client = await getClient()
-  const res = createQueryFn(client)(statement)
+  const res = createQueryFn(client)<T>(statement)
   await client.release()
   return res
 }
@@ -210,14 +224,6 @@ export const saveRoles = async (roles: RoleUpdateRequest) => {
   )
 
   return getRolesWithTargets()
-}
-
-type FantasyTeam = {
-  id: number
-  name: string
-  userId: string
-  seasonId: number
-  division: string
 }
 
 export const buyTeam = (userId: string, team: Team) =>

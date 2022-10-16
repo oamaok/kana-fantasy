@@ -31,6 +31,7 @@ const SeasonEditor = () => {
   return (
     <div className={styles('season-editor')}>
       <h2>Muokkaa kausia</h2>
+      <div className={styles('seasons')}>
       {editor.seasons.map((season) => (
         <div className={styles('season')}>
           <input
@@ -77,6 +78,7 @@ const SeasonEditor = () => {
       >
         Tallenna kaudet
       </Button>
+      </div>
     </div>
   )
 }
