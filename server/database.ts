@@ -8,6 +8,7 @@ import {
 } from 'pg'
 import {
   PlayerRole,
+  RoleDeleteRequest,
   RoleUpdateRequest,
   SeasonUpdateRequest,
   Team,
@@ -30,7 +31,7 @@ export const getClient = async (): Promise<PoolClient> => {
       return client
     } catch (err) {
       console.log('Waiting for database...')
-      await new Promise(resolve => setTimeout(resolve, 500))
+      await new Promise((resolve) => setTimeout(resolve, 500))
     }
   }
 }
@@ -224,6 +225,13 @@ export const saveRoles = async (roles: RoleUpdateRequest) => {
   )
 
   return getRolesWithTargets()
+}
+
+export const deleteRole = async (role: RoleDeleteRequest) => {
+  return await query(SQL`
+    DELETE FROM "playerRole"
+    WHERE "id" = ${role.id}
+  `)
 }
 
 export const buyTeam = (userId: string, team: Team) =>

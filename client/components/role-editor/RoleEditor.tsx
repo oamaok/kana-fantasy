@@ -61,6 +61,25 @@ const RoleEditor = () => {
         {editor.roles.map((role) => (
           <div className={styles('role')}>
             <div
+              className={styles('delete-role-button')}
+              onClick={async () => {
+                if (role.id) {
+                  try {
+                    await api.deleteRole({ id: role.id! })
+                    editor.roles = editor.roles.filter((r) => r.id !== role.id)
+                  } catch (e) {
+                    alert(e) // lul
+                  }
+                  return
+                }
+
+                editor.roles = editor.roles.filter((r) => r !== role)
+              }}
+            >
+              <span class="material-symbols-outlined">delete</span>
+            </div>
+
+            <div
               className={styles('field', {
                 error:
                   editor.roles.filter((r) => r.name === role.name).length > 1,

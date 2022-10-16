@@ -219,6 +219,13 @@ apiRouter
       ctx.body = await db.saveRoles(ctx.request.body)
     })
   )
+  .delete(
+    '/roles',
+    requireAdmin,
+    validateBody(validators.RoleDeleteRequest, async (ctx) => {
+      ctx.body = await db.deleteRole(ctx.request.body)
+    })
+  )
 
 app
   .use(bodyparser())

@@ -58,6 +58,11 @@ export type PlayerRole = t.TypeOf<typeof PlayerRole>
 
 export const RoleUpdateRequest = t.array(PlayerRole)
 
+export const RoleDeleteRequest = t.type({
+  id: t.number,
+})
+
+export type RoleDeleteRequest = t.TypeOf<typeof RoleDeleteRequest>
 export type RoleUpdateRequest = t.TypeOf<typeof RoleUpdateRequest>
 
 export const TeamPlayer = t.type({

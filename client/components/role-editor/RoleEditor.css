@@ -26,6 +26,7 @@
 }
 
 .role {
+  position: relative;
   background-color: #555;
   font-size: 16px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
@@ -97,4 +98,14 @@
 .overperform {
   height: 100%;
   background-color: green;
+}
+
+.delete-role-button {
+  position: absolute;
+  font-size: 20px;
+  font-weight: bold;
+  color: red;
+  top: 4px;
+  right: 10px;
+  cursor: pointer;
 }
