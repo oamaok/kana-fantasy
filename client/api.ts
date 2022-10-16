@@ -1,4 +1,5 @@
 import {
+  RoleDeleteRequest,
   RoleUpdateRequest,
   SeasonUpdateRequest,
   Team,
@@ -6,7 +7,11 @@ import {
 import { Player } from '../common/types'
 import { state } from './state'
 
-const apiRequest = (method: 'POST' | 'GET', endpoint: string, data?: any) =>
+const apiRequest = (
+  method: 'POST' | 'GET' | 'DELETE',
+  endpoint: string,
+  data?: any
+) =>
   fetch(`/api/${endpoint}`, {
     method,
     headers: {
@@ -31,6 +36,8 @@ export const getRoles = () => apiRequest('GET', 'roles')
 export const getRolesWithTargets = () => apiRequest('GET', 'roles/with-targets')
 export const saveRoles = (data: RoleUpdateRequest) =>
   apiRequest('POST', 'roles', data)
+export const deleteRole = (data: RoleDeleteRequest) =>
+  apiRequest('DELETE', 'roles', data)
 export const buyTeam = (team: Team) => apiRequest('POST', 'team/buy', team)
 export const getTeams = () => apiRequest('GET', 'teams')
 export const getSeasons = () => apiRequest('GET', 'seasons')
