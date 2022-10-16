@@ -31,7 +31,7 @@
   width: 100%;
   padding: 12px;
   color: #fff;
-  background: #f49703;
+  background: #48b803;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
@@ -60,6 +60,9 @@
   border-color: #f49703;
 }
 
+.stats {
+  color: #f49703;
+}
 .avatar {
   width: 128px;
   height: 128px;
@@ -97,6 +100,16 @@
   font-family: 'Big Shoulders Display', sans-serif;
   text-align: center;
   padding: 12px;
+}
+
+.taken {
+  pointer-events: none;
+  filter: grayscale(100%);
+  opacity: 0.2;
+}
+
+.role.selected .name {
+  background-color: #48b803;
 }
 
 .description {
