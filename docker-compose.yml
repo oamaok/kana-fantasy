@@ -9,6 +9,8 @@ services:
       - '5432:5432'
     environment:
       POSTGRES_PASSWORD: password
+    volumes:
+      - ./devdata.sql:/docker-entrypoint-initdb.d/devdata.sql
 
   kana-db:
     image: mariadb
