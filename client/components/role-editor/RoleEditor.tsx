@@ -76,7 +76,7 @@ const RoleEditor = () => {
                 editor.roles = editor.roles.filter((r) => r !== role)
               }}
             >
-              🗑
+              <span class="material-symbols-outlined">delete</span>
             </div>
 
             <div
