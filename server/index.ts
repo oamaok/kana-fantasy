@@ -24,7 +24,8 @@ const DISCORD_OAUTH2_TOKEN_REVOKE_CREDENTIALS = Buffer.from(
 const oauth = new OAuth({
   clientId: process.env.DISCORD_OAUTH2_CLIENT_ID,
   clientSecret: process.env.DISCORD_OAUTH2_CLIENT_SECRET,
-  redirectUri: 'http://localhost:8080',
+  redirectUri:
+    process.env.DISCORD_OAUTH2_REDIRECT_URI ?? 'http://localhost:8080',
 })
 
 type KoaContext = Koa.DefaultContext & { user?: JwtData }

@@ -1,6 +1,7 @@
 import { h, useEffect, useState } from 'kaiku'
 import * as api from '../../api'
 import { getOngoingSeason, state } from '../../state'
+import Panel from '../panel/Panel'
 import styles from './DivisionSelector.css'
 
 const onDivisionSelect = async (div: string) => {
@@ -19,19 +20,18 @@ const DivisionSelector = () => {
   if (!ongoingSeason) return null
 
   return (
-    <div className={styles('division-selector')}>
-      <div className={styles('title')}>Valitse divisioona</div>
+    <Panel header="Valitse divisioona" className={styles('divison-selector')}>
       <div className={styles('divisions')}>
         {ongoingSeason.divisions.map((division) => (
           <button
-            className={styles({ selected: division === state.division })}
+            className={() => styles({ selected: division === state.division })}
             onClick={() => onDivisionSelect(division)}
           >
             {division}
           </button>
         ))}
       </div>
-    </div>
+    </Panel>
   )
 }
 

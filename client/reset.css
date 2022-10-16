@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@300&family=Open+Sans&display=swap&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400&display=swap&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
 
 .material-symbols-outlined {
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
@@ -17,7 +17,8 @@
   outline: 0;
   background: none;
   box-sizing: border-box;
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
   text-decoration: none;
 }
 
@@ -29,7 +30,8 @@ h1,
 h2,
 h3,
 h4 {
-  font-family: 'Big Shoulders Display', sans-serif;
+  font-family: 'Lato', sans-serif;
+  text-transform: uppercase;
 }
 
 h1 {

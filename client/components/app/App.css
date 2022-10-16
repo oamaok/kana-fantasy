@@ -17,9 +17,9 @@
 }
 
 .footer {
-  background-color: #555;
+  background-color: #333;
   border-top: 4px solid #f49703;
   height: 200px;
   width: 100%;
-  padding: 24px;
+  padding: 24px 100px;
 }

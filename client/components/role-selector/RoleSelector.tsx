@@ -1,5 +1,6 @@
 import { h, useState } from 'kaiku'
 import { getCurrentTeam, getCurrentTeamPlayers, state } from '../../state'
+import Panel from '../panel/Panel'
 
 import styles from './RoleSelector.css'
 
@@ -22,8 +23,7 @@ const RoleSelector = () => {
   }
 
   return (
-    <div className={styles('role-selector')}>
-      <div className={styles('title')}>Pelaajien roolit</div>
+    <Panel header="Pelaajien roolit" className={styles('role-selector')}>
       <div className={styles('players')}>
         {players.map((player, index) => {
           const roleId = team?.players.find(
@@ -86,7 +86,7 @@ const RoleSelector = () => {
           </button>
         ))}
       </div>
-    </div>
+    </Panel>
   )
 }
 

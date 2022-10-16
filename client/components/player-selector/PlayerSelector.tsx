@@ -6,6 +6,7 @@ import styles from './PlayerSelector.css'
 import { Player } from '../../../common/types'
 import { formatPrice } from '../../utils'
 import { addPlayerToCurrentTeam } from '../../state'
+import Panel from '../panel/Panel'
 
 const MAX_PLAYERS_SELECTED_PER_TEAM = 2
 
@@ -37,13 +38,13 @@ const PlayerSelector = () => {
   return (
     <div className={styles('teams')}>
       {teams.map((team) => (
-        <div
-          className={styles('team', {
+        <Panel
+          header={team}
+          className={styles({
             'player-limit-reached':
               playersPerTeam[team] >= MAX_PLAYERS_SELECTED_PER_TEAM,
           })}
         >
-          <div className={styles('team-name')}>{team}</div>
           <div className={styles('players')}>
             {groupedPlayers[team].map((player) => (
               <div
@@ -65,11 +66,11 @@ const PlayerSelector = () => {
           </div>
           <div className={styles('limit')}>
             <span>
-              Voit valita enintään {MAX_PLAYERS_SELECTED_PER_TEAM} pelaajaa
-              kustakin joukkueesta.
+              Voit valita enintään {MAX_PLAYERS_SELECTED_PER_TEAM} pelaajaa per
+              joukkue.
             </span>
           </div>
-        </div>
+        </Panel>
       ))}
     </div>
   )

@@ -21,9 +21,7 @@
 
   text-align: center;
   padding: 12px;
-  font-weight: bold;
   text-transform: uppercase;
-  font-family: 'Big Shoulders Display', sans-serif;
   font-size: 32px;
   letter-spacing: 0.05em;
   transition: 0.1s ease-out all;
@@ -38,10 +36,9 @@
 .budget {
   text-align: center;
   padding: 12px;
-  font-weight: bold;
-  font-family: 'Big Shoulders Display', sans-serif;
   color: #48b803;
   font-size: 32px;
+  font-weight: 400;
   letter-spacing: 0.05em;
 }
 
@@ -90,10 +87,9 @@
 
 .price {
   padding: 4px 12px;
-  font-weight: bold;
-  font-family: 'Big Shoulders Display', sans-serif;
   background-color: #2b6e01;
   letter-spacing: 0.05em;
+  font-weight: 400;
   width: 100%;
 }
 

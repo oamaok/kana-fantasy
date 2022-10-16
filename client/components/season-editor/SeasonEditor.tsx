@@ -32,52 +32,52 @@ const SeasonEditor = () => {
     <div className={styles('season-editor')}>
       <h2>Muokkaa kausia</h2>
       <div className={styles('seasons')}>
-      {editor.seasons.map((season) => (
-        <div className={styles('season')}>
-          <input
-            type="text"
-            value={season.name}
-            onInput={(evt: InputEvent) => {
-              season.name = (evt.target as HTMLInputElement).value
-            }}
-          />
-          Alku{' '}
-          <input
-            type="date"
-            value={season.startDate}
-            onInput={(evt: InputEvent) => {
-              season.startDate = (evt.target as HTMLInputElement).value
-            }}
-          />
-          Loppu{' '}
-          <input
-            type="date"
-            value={season.endDate}
-            onInput={(evt: InputEvent) => {
-              season.endDate = (evt.target as HTMLInputElement).value
-            }}
-          />
-          Tiimien lukitus{' '}
-          <input
-            type="date"
-            value={season.lockDate}
-            onInput={(evt: InputEvent) => {
-              season.lockDate = (evt.target as HTMLInputElement).value
-            }}
-          />
-        </div>
-      ))}
-      <Button
-        onClick={async () => {
-          // TODO: Maybe diff the seasons so only the ones changed
-          // will be updated
-          const seasons = await api.saveSeasons(editor.seasons)
-          state.seasons = seasons
-          editor.seasons = seasons.map(formatDates)
-        }}
-      >
-        Tallenna kaudet
-      </Button>
+        {editor.seasons.map((season) => (
+          <div className={styles('season')}>
+            <input
+              type="text"
+              value={season.name}
+              onInput={(evt: InputEvent) => {
+                season.name = (evt.target as HTMLInputElement).value
+              }}
+            />
+            Alku{' '}
+            <input
+              type="date"
+              value={season.startDate}
+              onInput={(evt: InputEvent) => {
+                season.startDate = (evt.target as HTMLInputElement).value
+              }}
+            />
+            Loppu{' '}
+            <input
+              type="date"
+              value={season.endDate}
+              onInput={(evt: InputEvent) => {
+                season.endDate = (evt.target as HTMLInputElement).value
+              }}
+            />
+            Tiimien lukitus{' '}
+            <input
+              type="date"
+              value={season.lockDate}
+              onInput={(evt: InputEvent) => {
+                season.lockDate = (evt.target as HTMLInputElement).value
+              }}
+            />
+          </div>
+        ))}
+        <Button
+          onClick={async () => {
+            // TODO: Maybe diff the seasons so only the ones changed
+            // will be updated
+            const seasons = await api.saveSeasons(editor.seasons)
+            state.seasons = seasons
+            editor.seasons = seasons.map(formatDates)
+          }}
+        >
+          Tallenna kaudet
+        </Button>
       </div>
     </div>
   )
