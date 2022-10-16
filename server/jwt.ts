@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 
-type JwtData = {
+export type JwtData = {
   id: string
   isAdmin: boolean
   accessToken: string
