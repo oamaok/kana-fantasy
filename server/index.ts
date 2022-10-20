@@ -12,6 +12,7 @@ import * as t from 'io-ts'
 import * as jwt from './jwt'
 import * as validators from '../common/validators'
 import * as db from './database'
+import * as csApi from './csApi'
 
 import migrate from './scripts/migrate'
 import { JwtData } from './jwt'
@@ -227,6 +228,31 @@ apiRouter
       ctx.body = await db.deleteRole(ctx.request.body)
     })
   )
+  .get('/stats/:steamId', requireAuth, async (ctx) => {
+    const stats = await csApi.getPlayerStats(ctx.params.steamId)
+    const dataPoints = stats.data.length
+    const rating = stats.data.reduce(
+      (acc, value) => acc + value.kanaRating / dataPoints,
+      0
+    )
+    const hsPercent = stats.data.reduce(
+      (acc, value) => acc + value.hsPercent / dataPoints,
+      0
+    )
+    const adr = stats.data.reduce(
+      (acc, value) => acc + value.ADR / dataPoints,
+      0
+    )
+    const kills = stats.data.reduce((acc, value) => acc + value.Kills, 0)
+    const deaths = stats.data.reduce((acc, value) => acc + value.Deaths, 0) || 1
+
+    ctx.body = {
+      rating,
+      hsPercent,
+      adr,
+      kdRatio: kills / deaths,
+    }
+  })
 
 app
   .use(bodyparser())

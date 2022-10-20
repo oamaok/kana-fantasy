@@ -1,8 +1,7 @@
 .header {
-  background-color: #333;
-  border-bottom: 4px solid #555;
+  background-color: var(--secondary);
   width: 100%;
-  padding: 12px 100px;
+  padding: 18px 100px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -23,7 +22,7 @@
 
 .header nav button {
   margin-left: 24px;
-  color: #fff;
+  color: var(--on-secondary);
   font-size: 24px;
   text-transform: uppercase;
 }
@@ -46,8 +45,6 @@
 }
 
 .logout {
-  background-color: #f49703;
-  color: #fff;
   padding: 8px 12px;
   border-radius: 4px;
 }

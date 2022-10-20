@@ -9,7 +9,7 @@ type Props = {
 const Panel: FC<Props> = ({ header, className, children }) => {
   return (
     <div className={styles('panel', className ?? '')}>
-      {header && <div className={styles('header')}>{header}</div>}
+      {header && <h2 className={styles('header')}>{header}</h2>}
       <div className={styles('body')}>{children}</div>
     </div>
   )

@@ -10,14 +10,14 @@
 }
 
 .divisions button {
-  color: #fff;
-  border-bottom: 4px solid #555;
+  color: var(--secondary);
+  border-bottom: 4px solid var(--secondary);
   padding: 12px;
   margin: 0 12px;
   font-size: 24px;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
 }
 .divisions button.selected {
-  border-bottom: 4px solid #f49703;
+  font-weight: 500;
+  border-bottom: 4px solid var(--primary);
 }

@@ -43,3 +43,5 @@ export const getTeams = () => apiRequest('GET', 'teams')
 export const getSeasons = () => apiRequest('GET', 'seasons')
 export const saveSeasons = (seasons: SeasonUpdateRequest) =>
   apiRequest('POST', 'seasons', seasons)
+export const getPlayerStats = (steamId: string) =>
+  apiRequest('GET', `stats/${steamId}`)

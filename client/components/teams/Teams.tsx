@@ -85,7 +85,7 @@ const Teams = () => {
                       className={styles('remove')}
                       onClick={() => removePlayerFromCurrentTeam(player)}
                     >
-                      x
+                      <span className="material-symbols-outlined">delete</span>
                     </button>
                   </div>
                   <div className={styles('price')}>

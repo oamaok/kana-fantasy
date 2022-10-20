@@ -1,9 +1,11 @@
 .button {
-  border-radius: 4px;
   padding: 8px 12px;
-  color: #fff;
+  text-transform: uppercase;
+  font-weight: 500;
+  box-shadow: var(--box-shadow);
 }
 
 .primary {
-  background-color: #035ff4;
+  background-color: var(--primary);
+  color: var(--on-primary);
 }

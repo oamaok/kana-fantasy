@@ -5,18 +5,17 @@ const postcss = require('postcss')
 const postcssModules = require('postcss-modules')
 const cssnano = require('cssnano')
 
-const classNames = {}
-
 let currentId = 0
 
 const nextName = (name) => {
-  return `${name}__${currentId++}`
+  return `${name}__${(currentId++).toString(36)}`
 }
 
 const CssModulesPlugin = () => ({
   name: 'CssModulesPlugin',
   setup(build) {
     const cssContent = {}
+    const classNames = {}
 
     build.onLoad(
       { filter: /\.css$/ },
@@ -30,8 +29,17 @@ const CssModulesPlugin = () => ({
               classNameMap = map
             },
             generateScopedName(name) {
+              if (
+                build.initialOptions.entryPoints.some((entry) =>
+                  relativePath.endsWith(entry)
+                )
+              ) {
+                return name
+              }
+
               if (!classNames[filePath][name]) {
-                classNames[filePath][name] = nextName(name)
+                classNames[filePath][name] =
+                  path.basename(relativePath, '.css') + '__' + name
               }
 
               const scopedName = classNames[filePath][name]

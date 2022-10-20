@@ -6,6 +6,7 @@ import Button from '../button/Button'
 import { RoleUpdateRequest, Stat, StatTarget } from '../../../common/validators'
 
 import styles from './RoleEditor.css'
+import Panel from '../panel/Panel'
 
 const getBoundaries = (
   target: StatTarget,
@@ -55,8 +56,7 @@ const RoleEditor = () => {
   })
 
   return (
-    <div className={styles('role-editor')}>
-      <h3>Muokkaa rooleja</h3>
+    <Panel header="Muokkaa rooleja">
       <div className={styles('roles')}>
         {editor.roles.map((role) => (
           <div className={styles('role')}>
@@ -216,7 +216,7 @@ const RoleEditor = () => {
       >
         Tallenna roolit
       </Button>
-    </div>
+    </Panel>
   )
 }
 

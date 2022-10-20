@@ -4,6 +4,7 @@ import Button from '../button/Button'
 import * as api from '../../api'
 import styles from './SeasonEditor.css'
 import { Season } from '../../../common/validators'
+import Panel from '../panel/Panel'
 
 const toDateInputFormat = (date: Date | string): string =>
   new Date(date).toISOString().substr(0, 10)
@@ -29,8 +30,7 @@ const SeasonEditor = () => {
   })
 
   return (
-    <div className={styles('season-editor')}>
-      <h2>Muokkaa kausia</h2>
+    <Panel header="Muokkaa kausia">
       <div className={styles('seasons')}>
         {editor.seasons.map((season) => (
           <div className={styles('season')}>
@@ -79,7 +79,7 @@ const SeasonEditor = () => {
           Tallenna kaudet
         </Button>
       </div>
-    </div>
+    </Panel>
   )
 }
 

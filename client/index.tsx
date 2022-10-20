@@ -1,6 +1,5 @@
 import { h, render } from 'kaiku'
 import { getOngoingSeason, state } from './state'
-import { navigateTo } from './router'
 import * as api from './api'
 import App from './components/app/App'
 import { handleOAuth, inititializeAuth } from './auth'

@@ -5,10 +5,10 @@
 .teams {
   padding: 24px;
   width: 300px;
-  background-color: #333;
-  border-bottom: 4px solid #555;
+  background-color: var(--secondary);
+  border: 1px solid var(--tertiary);
+  box-shadow: var(--box-shadow);
   margin-bottom: 24px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
   position: sticky;
   top: 24px;
 }
@@ -16,7 +16,7 @@
 .buy {
   color: #fff;
   background-color: #48b803;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--box-shadow);
   width: 100%;
 
   text-align: center;
@@ -30,7 +30,7 @@
 .buy:hover {
   cursor: pointer;
   transform: scale(1.1);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+  box-shadow: var(--box-shadow);
 }
 
 .budget {
@@ -47,11 +47,19 @@
 }
 
 .slot {
-  background-color: #555;
+  background-color: var(--tertiary);
+  color: var(--on-tertiary);
   margin-top: 12px;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  box-shadow: var(--box-shadow);
+}
+
+.empty {
+  color: var(--secondary);
+  text-align: center;
+  padding: 12px;
+  text-transform: uppercase;
 }
 
 .field {
@@ -88,15 +96,10 @@
 .price {
   padding: 4px 12px;
   background-color: #2b6e01;
+  color: #ffffff;
   letter-spacing: 0.05em;
   font-weight: 400;
   width: 100%;
-}
-
-.empty {
-  color: #aaa;
-  text-align: center;
-  padding: 12px;
 }
 
 .details {

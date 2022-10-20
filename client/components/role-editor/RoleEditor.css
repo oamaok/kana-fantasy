@@ -1,20 +1,3 @@
-.role-editor {
-  color: #fff;
-  background-color: #333;
-  border-bottom: 4px solid #555;
-  margin-bottom: 36px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-}
-.role-editor h3 {
-  width: 100%;
-  text-align: center;
-  font-size: 32px;
-  background-color: #f49703;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  padding: 12px;
-}
-
 .roles {
   display: flex;
   flex-direction: row;
@@ -25,7 +8,8 @@
 
 .role {
   position: relative;
-  background-color: #555;
+  background-color: var(--tertiary);
+  color: var(--on-tertiary);
   font-size: 16px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
   width: 400px;

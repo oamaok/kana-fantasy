@@ -1,4 +1,4 @@
-import { h } from 'kaiku'
+import { h, useState } from 'kaiku'
 
 import { getCurrentTeam, getRemainingBudget, state } from '../../state'
 
@@ -6,11 +6,21 @@ import styles from './PlayerSelector.css'
 import { Player } from '../../../common/types'
 import { formatPrice } from '../../utils'
 import { addPlayerToCurrentTeam } from '../../state'
+import * as api from '../../api'
 import Panel from '../panel/Panel'
+import Button from '../button/Button'
 
 const MAX_PLAYERS_SELECTED_PER_TEAM = 2
 
 const PlayerSelector = () => {
+  const selectorState = useState<{
+    selectedCard: string | null
+    stats: null | Record<string, number>
+  }>({
+    selectedCard: null,
+    stats: null,
+  })
+
   const selectedPlayers = new Set(
     getCurrentTeam()?.players.map((p) => p.steamId)
   )
@@ -35,6 +45,8 @@ const PlayerSelector = () => {
   const budgetRemaining = getRemainingBudget()
   const teams = Object.keys(groupedPlayers)
 
+  console.log('render')
+
   return (
     <div className={styles('teams')}>
       {teams.map((team) => (
@@ -45,21 +57,94 @@ const PlayerSelector = () => {
               playersPerTeam[team] >= MAX_PLAYERS_SELECTED_PER_TEAM,
           })}
         >
-          <div className={styles('players')}>
+          <div
+            className={
+              styles('players', {
+                inspecting: selectorState.selectedCard !== null,
+              })
+            }
+          >
             {groupedPlayers[team].map((player) => (
               <div
-                className={styles('player', {
-                  selected: selectedPlayers.has(player.steamId),
-                  'too-expensive': budgetRemaining < player.price,
-                })}
-                onClick={() => addPlayerToCurrentTeam(player)}
+                className={
+                  styles('perspective', {
+                    inspecting: selectorState.selectedCard === player.steamId,
+                  })
+                }
               >
-                <div className={styles('details')}>
-                  <img src={player.avatar} className={styles('avatar')} />
-                  <div className={styles('name')}>{player.username}</div>
-                </div>
-                <div className={styles('price')}>
-                  {formatPrice(player.price)}
+                <div
+                  className={
+                    styles('player-card', {
+                      selected: selectedPlayers.has(player.steamId),
+                      'too-expensive': budgetRemaining < player.price,
+                      inspecting: selectorState.selectedCard === player.steamId,
+                    })
+                  }
+                  onClick={async () => {
+                    if (selectedPlayers.has(player.steamId)) return
+                    if (selectorState.selectedCard === player.steamId) {
+                      selectorState.selectedCard = null
+                      selectorState.stats = null
+                      return
+                    }
+
+                    selectorState.selectedCard = player.steamId
+                    selectorState.stats = null
+                    selectorState.stats = await api.getPlayerStats(
+                      player.steamId
+                    )
+                  }}
+                >
+                  <div className={styles('front')}>
+                    <div className={styles('details')}>
+                      <img src={player.avatar} className={styles('avatar')} />
+                      <h4 className={styles('name')}>{player.username}</h4>
+                    </div>
+                    <div className={styles('price')}>
+                      {formatPrice(player.price)}
+                    </div>
+                  </div>
+                  <div className={styles('back')}>
+                    <div className={styles('header')}>
+                      <img src={player.avatar} />
+                      <div className={styles('gradient')} />
+                      <h4 className={styles('name')}>{player.username}</h4>
+                      <div className={styles('price')}>
+                        {formatPrice(player.price)}
+                      </div>
+                    </div>
+                    {selectorState.stats && (
+                      <div className={styles('stats')}>
+                        <div className={styles('label')}>Rating</div>{' '}
+                        <div className={styles('value')}>
+                          {selectorState.stats.rating.toFixed(2)}
+                        </div>
+                        <div className={styles('label')}>HS%</div>{' '}
+                        <div className={styles('value')}>
+                          {selectorState.stats.hsPercent.toFixed(0)}%
+                        </div>
+                        <div className={styles('label')}>ADR</div>{' '}
+                        <div className={styles('value')}>
+                          {selectorState.stats.adr.toFixed(0)}
+                        </div>
+                        <div className={styles('label')}>K/D</div>{' '}
+                        <div className={styles('value')}>
+                          {selectorState.stats.kdRatio.toFixed(2)}
+                        </div>
+                      </div>
+                    )}
+                    <button
+                      className={styles('select')}
+                      onClick={() => {
+                        addPlayerToCurrentTeam(player)
+                        selectorState.selectedCard = null
+                        selectorState.stats = null
+                      }}
+                    ><span class="material-symbols-outlined">
+                    person_add
+                    </span>
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
