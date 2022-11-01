@@ -10,7 +10,7 @@
   box-shadow: var(--box-shadow);
   margin-bottom: 24px;
   position: sticky;
-  top: 24px;
+  top: 100px;
 }
 
 .buy {

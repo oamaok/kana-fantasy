@@ -71,6 +71,8 @@ const CssModulesPlugin = () => ({
       )
 
       await fs.writeFile(bundlePath, css)
+
+      console.log('Build done.')
     })
   },
 })

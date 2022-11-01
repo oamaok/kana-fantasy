@@ -5,6 +5,11 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+  position: fixed;
+  top: 0;
+  z-index: 100000;
+  border-bottom: 1px solid var(--tertiary);
+  box-shadow: var(--box-shadow);
 }
 
 .logo {

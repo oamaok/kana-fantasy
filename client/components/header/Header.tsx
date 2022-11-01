@@ -1,11 +1,8 @@
 import { h } from 'kaiku'
 import { getIsAdmin, state } from '../../state'
 
-import * as api from '../../api'
-
 import styles from './Header.css'
 import { logout, User } from '../../auth'
-import Button from '../button/Button'
 import { navigateTo } from '../../router'
 import config from '../../config'
 

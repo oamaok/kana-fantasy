@@ -7,10 +7,10 @@
   flex-direction: row;
   justify-content: center;
   flex-wrap: wrap;
+  color: var(--secondary);
 }
 
 .divisions button {
-  color: var(--secondary);
   border-bottom: 4px solid var(--secondary);
   padding: 12px;
   margin: 0 12px;

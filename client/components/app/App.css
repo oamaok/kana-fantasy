@@ -2,11 +2,11 @@
   color: #fff;
   display: flex;
   flex-direction: column;
+  padding-top: 112px;
 }
 
 .content {
   min-height: 100vh;
-  padding: 24px;
 }
 
 .header {

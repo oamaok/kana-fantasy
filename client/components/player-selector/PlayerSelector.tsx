@@ -8,9 +8,14 @@ import { formatPrice } from '../../utils'
 import { addPlayerToCurrentTeam } from '../../state'
 import * as api from '../../api'
 import Panel from '../panel/Panel'
-import Button from '../button/Button'
 
 const MAX_PLAYERS_SELECTED_PER_TEAM = 2
+
+const priceToRank = (price: number) => {
+  if (price > 210000) return 'gold'
+  if (price < 190000) return 'bronze'
+  return 'silver'
+}
 
 const PlayerSelector = () => {
   const selectorState = useState<{
@@ -45,8 +50,6 @@ const PlayerSelector = () => {
   const budgetRemaining = getRemainingBudget()
   const teams = Object.keys(groupedPlayers)
 
-  console.log('render')
-
   return (
     <div className={styles('teams')}>
       {teams.map((team) => (
@@ -58,28 +61,22 @@ const PlayerSelector = () => {
           })}
         >
           <div
-            className={
-              styles('players', {
-                inspecting: selectorState.selectedCard !== null,
-              })
-            }
+            className={styles('players', {
+              inspecting: selectorState.selectedCard !== null,
+            })}
           >
             {groupedPlayers[team].map((player) => (
               <div
-                className={
-                  styles('perspective', {
-                    inspecting: selectorState.selectedCard === player.steamId,
-                  })
-                }
+                className={styles('perspective', {
+                  inspecting: selectorState.selectedCard === player.steamId,
+                })}
               >
                 <div
-                  className={
-                    styles('player-card', {
-                      selected: selectedPlayers.has(player.steamId),
-                      'too-expensive': budgetRemaining < player.price,
-                      inspecting: selectorState.selectedCard === player.steamId,
-                    })
-                  }
+                  className={styles('player-card', priceToRank(player.price), {
+                    selected: selectedPlayers.has(player.steamId),
+                    'too-expensive': budgetRemaining < player.price,
+                    inspecting: selectorState.selectedCard === player.steamId,
+                  })}
                   onClick={async () => {
                     if (selectedPlayers.has(player.steamId)) return
                     if (selectorState.selectedCard === player.steamId) {
@@ -95,6 +92,8 @@ const PlayerSelector = () => {
                     )
                   }}
                 >
+                  <div className={styles('selected-label')}>Valittu</div>
+                  <div className={styles('too-expensitve-label')}>Ei varaa</div>
                   <div className={styles('front')}>
                     <div className={styles('details')}>
                       <img src={player.avatar} className={styles('avatar')} />
@@ -140,9 +139,8 @@ const PlayerSelector = () => {
                         selectorState.selectedCard = null
                         selectorState.stats = null
                       }}
-                    ><span class="material-symbols-outlined">
-                    person_add
-                    </span>
+                    >
+                      <span class="material-symbols-outlined">person_add</span>
                     </button>
                   </div>
                 </div>

@@ -203,10 +203,14 @@ apiRouter
   )
   .get('/seasons/:season', () => {})
   .get('/seasons/:season/:division/players', requireAuth, async (ctx) => {
-    ctx.body = await db.getPlayers(
+    const players = await db.getPlayers(
       parseInt(ctx.params.season),
       ctx.params.division
     )
+
+    players.sort((a, b) => b.price - a.price)
+
+    ctx.body = players
   })
   .get('/roles', requireAuth, async (ctx) => {
     ctx.body = await db.getRoles()

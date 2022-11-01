@@ -5,7 +5,6 @@ import {
   Team,
 } from '../common/validators'
 import { Player } from '../common/types'
-import { state } from './state'
 
 const apiRequest = (
   method: 'POST' | 'GET' | 'DELETE',
